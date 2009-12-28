@@ -12,7 +12,7 @@ public class RobustHiding_PID implements PlugInFilter {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 	@Override
 	public int setup(String arg, ImagePlus imp) {
 		this.imp = imp;
