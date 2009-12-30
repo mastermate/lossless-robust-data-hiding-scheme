@@ -104,4 +104,15 @@ public interface EmbeddedValidation {
 	 */
 	public int getNumberOfBlocks(ImagePlus img, int m, int n);
 	
+  /**
+   * Dialogo que permite cargar un archivo para inyectarlo en la imagen
+   * 
+   * @return byte [] embedfile array con los bytes del archivo que vamos a inyectar
+   */
+   public void readFile();
+  
 }
+
+
+
+

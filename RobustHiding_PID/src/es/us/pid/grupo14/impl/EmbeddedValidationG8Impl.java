@@ -4,6 +4,9 @@ import ij.ImagePlus;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
 import es.us.pid.grupo14.EmbeddedValidation;
+import ij.io.OpenDialog;
+import java.io.RandomAccessFile;
+
 
 public class EmbeddedValidationG8Impl implements EmbeddedValidation {
 
@@ -130,5 +133,35 @@ public class EmbeddedValidationG8Impl implements EmbeddedValidation {
 		res = img;
 		return res;
 	}
+
+  @Override
+  public readFile() throws IOException{
+    //Esta funcion necesita lanzar la excepcion IOException por si no se puede acceder al archivo.
+    String arg ="";
+  	String filename=arg;
+  	String directory ="";
+  	
+    RandomAccessFile f;
+  	byte [] res;
+  	byte [] embedfile;
+  	
+  	// Muestro el dialogo para capturar la ruta del archivo que vamos a inyectar
+    OpenDialog od = new OpenDialog("Selecciona el archivo a inyectar", arg);
+    filename = od.getFileName();
+    if(filename == null){
+      return;
+    }
+    directory = od.getDirectory();
+    
+    // Accedo al archivo en modo lectura
+    f = new RandomAccessFile(directory+filename,"r");
+    embedfile = new byte[(int)f.length()];
+    
+    // Cargo el archivo en un array de bytes
+    f.readFully(embedfile);
+    
+    res = embedfile;
+    return res;
+  }
 
 }
