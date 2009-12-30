@@ -1,5 +1,7 @@
 package es.us.pid.grupo14;
 
+import java.io.IOException;
+
 import ij.ImagePlus;
 
 /**
@@ -109,7 +111,7 @@ public interface EmbeddedValidation {
    * 
    * @return byte [] embedfile array con los bytes del archivo que vamos a inyectar
    */
-   public void readFile();
+   public byte[] readFile() throws IOException;
   
 }
 
