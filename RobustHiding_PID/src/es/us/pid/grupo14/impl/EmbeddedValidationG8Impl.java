@@ -3,9 +3,9 @@ package es.us.pid.grupo14.impl;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
-import es.us.pid.grupo14.EmbebbedValidation;
+import es.us.pid.grupo14.EmbeddedValidation;
 
-public class EmbebbedValidationImpl implements EmbebbedValidation {
+public class EmbeddedValidationG8Impl implements EmbeddedValidation {
 
 	//TODO probar todos estos metodos con imagenes y asegurarse de que funcionan correctamente
 	
@@ -27,8 +27,9 @@ public class EmbebbedValidationImpl implements EmbebbedValidation {
 
 	@Override
 	public int getDelta(int histogramType) {
+		//solo sera -1 para el tipo C
 		int res;
-		if (histogramType == EmbebbedValidation.HISTOGRAM_TYPE_C){
+		if (histogramType == EmbeddedValidation.HISTOGRAM_TYPE_C){
 			res = -1;
 		}
 		else{
@@ -50,22 +51,22 @@ public class EmbebbedValidationImpl implements EmbebbedValidation {
 			//tipos A y C
 			if (beta1 >= gap2){
 				//tipo A
-				res = EmbebbedValidation.HISTOGRAM_TYPE_A;
+				res = EmbeddedValidation.HISTOGRAM_TYPE_A;
 			}
 			else{
 				//tipo C
-				res = EmbebbedValidation.HISTOGRAM_TYPE_C;
+				res = EmbeddedValidation.HISTOGRAM_TYPE_C;
 			}
 		}
 		else{
 			//tipos B y D
 			if (beta1 >= gap2){
 				//tipo B
-				res = EmbebbedValidation.HISTOGRAM_TYPE_B;
+				res = EmbeddedValidation.HISTOGRAM_TYPE_B;
 			}
 			else{
 				//tipo D
-				res = EmbebbedValidation.HISTOGRAM_TYPE_D;
+				res = EmbeddedValidation.HISTOGRAM_TYPE_D;
 			}
 		}
 		return res;
@@ -100,15 +101,34 @@ public class EmbebbedValidationImpl implements EmbebbedValidation {
 
 	@Override
 	public boolean isValidSize(ImagePlus img, byte[] data) {
-		// TODO Auto-generated method stub
+		// TODO depende del numero de bloques utiles (los que quedan en medio)
+		
+		//si T < alphaMax, no es posible calcular la capacidad sin calcular los alphas
 		return false;
 	}
 
 	@Override
 	public ImagePlus reescaleHistogram(ImagePlus img, int type, int beta1,
 			int beta2) {
-		// TODO Auto-generated method stub
-		return null;
+		//TODO es importante probar esta funcion
+		ImagePlus res = null;
+		if (type == EmbeddedValidation.HISTOGRAM_TYPE_D){
+//			ImageStatistics is = img.getStatistics();
+			int bitDepth = img.getBitDepth();
+			int maxLevel = (int)Math.pow(2, bitDepth) - 1;
+			int newMax = maxLevel - beta1;
+			ImageProcessor ip = img.getProcessor();
+			//imagenes en escala de grises de 8 bits
+			byte[] pixels = (byte[])ip.getPixels();
+			for (int i = 0; i < pixels.length; i++){
+				//truncamos al mayor valor posible
+				if (pixels[i] > newMax){
+					pixels[i] = (byte)newMax;
+				}
+			}
+		}
+		res = img;
+		return res;
 	}
 
 }

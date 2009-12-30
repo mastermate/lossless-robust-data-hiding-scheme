@@ -9,7 +9,7 @@
   	<property name="user.name" value="Jesus" />
 	<target name="main" depends="compress" description="Main target">
 		<echo>
-			Building the .jar file.
+			Building the .jar file :D
 		</echo>
 	</target>
 	<target name="compress" depends="" description="generate the distribution">
@@ -20,6 +20,6 @@
  	 		   <attribute name="Built-By" value="${user.name}"/>
  			</manifest>
  		</jar>
-    	<copy file="RobustHiding_PID.jar" toDir="${pluginsDir}" />
+    	<move file="RobustHiding_PID.jar" toDir="${pluginsDir}" />
 	</target>
 </project>

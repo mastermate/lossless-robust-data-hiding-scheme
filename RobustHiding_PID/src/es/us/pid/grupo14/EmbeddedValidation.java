@@ -10,7 +10,7 @@ import ij.ImagePlus;
  * @author Grupo 14
  *
  */
-public interface EmbebbedValidation {
+public interface EmbeddedValidation {
 
 	public static final int HISTOGRAM_TYPE_A = 0;
 	
