@@ -125,7 +125,7 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 
 	private int getAlpha(int[][] matrixM, int[][] pixels, int i, int j,
 			int delta) {
-		// TODO probar con mucho cuidao esta funcion
+		//funcion validada
 		int alpha = 0;
 		int aLimit = i + matrixM.length, bLimit = j + matrixM[0].length;
 		int c = 0, d = 0;
@@ -173,7 +173,7 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 //	}
 
 	private boolean extractBit(byte b, int index){
-		//TODO probar esta funcion
+		//funcion validada
 		int aux = 0;
 		switch (index){
 			case 0:
