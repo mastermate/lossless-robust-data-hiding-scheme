@@ -26,7 +26,7 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 				res = createGap(res, pixels, beta1, alpha, t, delta, i, j, m, n);
 
 				if (isInRange(alpha, t)) {
-					res = insertBit(res, pixels, bits, bitCont, alpha, beta2,
+					res = insertBit(res, pixels, bits, bitCont, alpha, beta2, t,
 							delta, i, j, m, n);
 					bitCont++;
 				}
@@ -37,8 +37,8 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 		return res;
 	}
 
-	private ImagePlus insertBit(ImagePlus res, int[][] pixels, byte[] bits,
-			int bitCont, int alpha, int beta2, int delta, int i, int j, int m, int n) {
+	public ImagePlus insertBit(ImagePlus res, int[][] pixels, byte[] bits,
+			int bitCont, int alpha, int beta2, int t,int delta, int i, int j, int m, int n) {
 		
 		// TODO probar tambien esta funcion
 		int byteIndex = bitCont/8, byteMod = bitCont % 8;
@@ -84,10 +84,10 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 		return res;
 	}
 
-	private ImagePlus createGap(ImagePlus res, int[][] pixels, int beta1,
-			int alpha, int t, int delta, int i, int j, int m, int n) {
+	public ImagePlus createGap(ImagePlus res, int[][] pixels, int alpha,
+			int beta1, int t, int delta, int i, int j, int m, int n) {
 		
-		// TODO probar este metodo
+		//metodo validado con tests
 		int aLimit = i + m, bLimit = j + n;
 		ImageProcessor ip = res.getProcessor();
 		int pixel;
@@ -123,7 +123,7 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 		return res;
 	}
 
-	private int getAlpha(int[][] matrixM, int[][] pixels, int i, int j,
+	public int getAlpha(int[][] matrixM, int[][] pixels, int i, int j,
 			int delta) {
 		//funcion validada
 		int alpha = 0;
@@ -140,7 +140,7 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 		return alpha;
 	}
 
-	private boolean isInRange(int alpha, int t) {
+	public boolean isInRange(int alpha, int t) {
 		if ((alpha <= t) && (alpha >= -t)) {
 			return true;
 		} else {
@@ -148,7 +148,7 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 		}
 	}
 
-	private int[][] getMatrixM(int m, int n) {
+	public int[][] getMatrixM(int m, int n) {
 		int[][] res = new int[m][n];
 		for (int i = 0; i < m; i++) {
 			for (int j = 0; j < n; j++) {
@@ -172,7 +172,7 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 //		return res;
 //	}
 
-	private boolean extractBit(byte b, int index){
+	public boolean extractBit(byte b, int index){
 		//funcion validada
 		int aux = 0;
 		switch (index){
