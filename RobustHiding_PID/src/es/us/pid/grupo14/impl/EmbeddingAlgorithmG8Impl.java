@@ -1,31 +1,38 @@
 package es.us.pid.grupo14.impl;
 
 import ij.ImagePlus;
+import ij.gui.NewImage;
+import ij.process.Blitter;
+import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import es.us.pid.grupo14.EmbeddingAlgorithm;
 
 public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 
 	@Override
-	public ImagePlus embedBits(ImagePlus img, byte[] bits, int g, int m, int n,
-			int t, int beta1, int beta2, int delta) {
-
-		ImagePlus res = img.createImagePlus();
-//		ImageProcessor resProcessor = res.getProcessor();
-		int bitCont = 0;
-
-		int[][] matrixM = getMatrixM(m, n);
-//		int nBlocks = getNumberOfBlocks(img, m, n);
+	public ImagePlus embedBits(ImagePlus img, byte[] bits, int t, int g, int m, int n,
+			int beta1, int beta2, int delta) {
+		
 		int w = img.getWidth(), h = img.getHeight();
+		ImageProcessor ip = new ByteProcessor(w, h);
+		ImagePlus res = new ImagePlus("stego-image",ip);
+		res.getProcessor().insert(img.getProcessor(), 0, 0);
+		int bitCont = 0;
+		int dataSize = bits.length * 8;
+		int[][] matrixM = getMatrixM(m, n);
+		
 		// TODO cuidado con como me devuelve el array de enteros
 		int[][] pixels = img.getProcessor().getIntArray();
-		// img.getProcessor().pu
+		
+		
+		//mientras queden bloques
 		for (int i = 0; i < h; i = i + m) {
 			for (int j = 0; j < w; j = j + n) {
 				int alpha = getAlpha(matrixM, pixels, i, j, delta);
 				res = createGap(res, pixels, beta1, alpha, t, delta, i, j, m, n);
 
-				if (isInRange(alpha, t)) {
+				//si el alpha esta en rango y quedan aun datos por insertar
+				if (isInRange(alpha, t) && (bitCont < dataSize)) {
 					res = insertBit(res, pixels, bits, bitCont, alpha, beta2, t,
 							delta, i, j, m, n);
 					bitCont++;
@@ -40,7 +47,7 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 	public ImagePlus insertBit(ImagePlus res, int[][] pixels, byte[] bits,
 			int bitCont, int alpha, int beta2, int t,int delta, int i, int j, int m, int n) {
 		
-		// TODO probar tambien esta funcion
+		//funciona correctamente
 		int byteIndex = bitCont/8, byteMod = bitCont % 8;
 		boolean bitValue = extractBit(bits[byteIndex],byteMod);
 		int aLimit = i + m, bLimit = j + n;
