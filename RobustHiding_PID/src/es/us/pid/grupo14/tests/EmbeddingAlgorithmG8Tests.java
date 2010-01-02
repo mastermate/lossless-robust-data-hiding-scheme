@@ -46,20 +46,30 @@ public class EmbeddingAlgorithmG8Tests {
 		img = new ImagePlus("tests-files/lena512.bmp");
 		emb = new EmbeddingAlgorithmG8Impl();
 		val = new EmbeddedValidationG8Impl();
-		data = new byte[10];
-		byte[] dataAux = {1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17};
+		//data = new byte[10];
+		byte[] dataAux = {1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,-127,-127,
+				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
+				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
+				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
+				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
+				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
+				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
+				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
+				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,};
 		data = dataAux;
 	}
 	
 	
 	@Test
 	public void test1(){
-		m = 4;
-		n = 4;
-		t = 150;
-		g = 100;
+		m = 8;
+		n = 8;
+		t = 128;
+		g = 64;
 		beta1 = val.getBeta1(g, t, m, n);
 		beta2 = val.getBeta2(g, t, m, n);
+		System.out.println("Beta 1 = "+beta1);
+		System.out.println("Beta 2 = "+beta2);
 		int histogramType = val.getHistogramType(img, beta1, beta2);
 		delta = val.getDelta(histogramType);
 		ImagePlus res = emb.embedBits(img, data, t, g, m, n, beta1, beta2, delta);

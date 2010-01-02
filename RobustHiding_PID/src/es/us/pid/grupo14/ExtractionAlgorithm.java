@@ -21,6 +21,6 @@ public interface ExtractionAlgorithm {
 	 * @param delta int
 	 * @return HidingResult contiene tanto la imagen original como la informacion oculta
 	 */
-	public HidingResult extractBits(ImagePlus stegoImg, int m, int n, int t, int g, int delta);
+	public HidingResult extractBits(ImagePlus stegoImg, int m, int n, int t, int g, int delta, int n0, int n1);
 	
 }
