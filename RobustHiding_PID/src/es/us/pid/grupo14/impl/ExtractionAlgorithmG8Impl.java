@@ -38,19 +38,23 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 
 				if (isInZeroZone(t, alpha) && (bitCount < dataSize)) {
 					bitCount++;
+					
+					if (bitCount % 8 == 0) {
+						data.write(actualByte);
+						actualByte=0;
+					}
 				}
 				else if(isInOneZone(t, g, alpha) && (bitCount < dataSize))
 				{
 					actualByte = addBit(actualByte,bitCount%8);
 					bitCount++;
+					if (bitCount % 8 == 0) {
+						data.write(actualByte);
+						actualByte=0;
+					}
 					//Nota: no sé si es necesaria esta parafernalia de recoveredImg = ... pasamos un objeto por referencia ¿no?
 					//no debería hacer falta asignarlo de nuevo
 					recoveredImg = restoreGapBeta2(recoveredImg, pixels, alpha, beta2, t, g, i, j, m, n);
-				}
-				
-				if (bitCount % 8 == 0) {
-					data.write(actualByte);
-					actualByte=0;
 				}
 			}
 

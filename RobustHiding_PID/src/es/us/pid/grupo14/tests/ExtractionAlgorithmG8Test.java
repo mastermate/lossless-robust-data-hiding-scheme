@@ -58,7 +58,7 @@ public class ExtractionAlgorithmG8Test {
 				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
 				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
 				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
-				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,};
+				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127};
 		data = dataAux;
 	}
 	
@@ -75,7 +75,7 @@ public class ExtractionAlgorithmG8Test {
 		System.out.println("Beta 2 = "+beta2);
 		int histogramType = ev.getHistogramType(stegoImg, beta1, beta2);
 		delta = ev.getDelta(histogramType);
-		HidingResult res = ext.extractBits(stegoImg, m, n, t, g, histogramType, (int)(data.length *8/2), (int)(data.length *8/2));
+		HidingResult res = ext.extractBits(stegoImg, m, n, t, g, delta, (int)(data.length *8/2), (int)(data.length *8/2));
 		ImagePlus imgRest = res.getImg();
 		imgRest.show();
 		BufferedImage im = imgRest.getBufferedImage();
@@ -121,5 +121,9 @@ public class ExtractionAlgorithmG8Test {
 //		System.out.println("Lena restaurada");
 //		System.out.println("=============");
 //		Utils.printImageBlocks(imgRest, m, n);
+		byte[] recoveredData = res.getData();
+		for (int i = 0; i < recoveredData.length; i++) {
+			System.out.println(recoveredData[i]);
+		}
 	}
 }
