@@ -1,5 +1,8 @@
 package es.us.pid.grupo14.tests.utils;
 
+import ij.ImagePlus;
+import ij.process.ImageProcessor;
+
 public class Utils {
 
 	public static int[][] createRandomByteArray(int m, int n){
@@ -25,4 +28,18 @@ public class Utils {
 		}
 	}
 	
+	public static void printImageBlocks(ImagePlus img, int m, int n)
+	{
+		int w = img.getWidth(), h = img.getHeight();
+		ImageProcessor ip = img.getProcessor();
+		int numBlock = 1;
+		for (int i = 0; i < h; i = i + m) {
+			for (int j = 0; j < w; j = j + n) {
+				System.out.println("Bloque: "+numBlock);
+				printArray(ip.getIntArray(),i,j,m,n);
+				System.out.println();
+				numBlock++;
+			}
+		}	
+	}
 }

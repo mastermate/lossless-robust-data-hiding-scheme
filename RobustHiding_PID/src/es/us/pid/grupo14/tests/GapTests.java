@@ -10,6 +10,7 @@ import org.junit.Test;
 import es.us.pid.grupo14.EmbeddedValidation;
 import es.us.pid.grupo14.impl.EmbeddedValidationG8Impl;
 import es.us.pid.grupo14.impl.EmbeddingAlgorithmG8Impl;
+import es.us.pid.grupo14.impl.ExtractionAlgorithmG8Impl;
 import es.us.pid.grupo14.tests.utils.Utils;
 
 
@@ -18,6 +19,8 @@ public class GapTests {
 	private EmbeddedValidation ev;
 	
 	private EmbeddingAlgorithmG8Impl em;
+	
+	private ExtractionAlgorithmG8Impl ex;
 	
 	private ImagePlus ip;
 	
@@ -42,7 +45,8 @@ public class GapTests {
 		m = 3;
 		n = 3;
 		ev = new EmbeddedValidationG8Impl();
-		em = new EmbeddingAlgorithmG8Impl(); 
+		em = new EmbeddingAlgorithmG8Impl();
+		ex = new ExtractionAlgorithmG8Impl();
 		array1 = Utils.createRandomByteArray(10, 20);
 		array2 = new int[10][20];
 		matrixM = ev.getMatrixM(m, n);
@@ -116,6 +120,55 @@ public class GapTests {
 		ImagePlus res = em.createGap(ip, array1, alpha, beta1, t, delta, 0, 0, m, n);
 		int[][] bytesSalida = res.getProcessor().getIntArray();
 		System.out.println("Bytes posteriores a beta1");
+		Utils.printArray(bytesSalida, 0, 0, m, n);
+	}
+	
+	/*
+	 * Para los |Alpha| > T se les suma beta1, probamos el restoreGapBeta1 para ver si los
+	 * devuelve a su estado original
+	 * 
+	 * Delta = 1
+	 */
+	@Test
+	public void test1c(){
+		System.out.println();
+		System.out.println();
+		System.out.println("----------------------------");
+		System.out.println("|Alpha| > T ---- Delta = 1");
+		System.out.println("----------------------------");
+		System.out.println("Bytes anteriores a beta1");
+		Utils.printArray(array1, 0, 0, m, n);
+		delta = 1;
+		int alpha = em.getAlpha(matrixM, array1, 0, 0, 1);
+		int t = Math.abs(alpha) - 1;
+		int g = 5;
+		beta1 = ev.getBeta1(g, t, m, n);
+		System.out.println("-------------------");
+		System.out.println("Alpha = "+alpha);
+		System.out.println("T = "+t);
+		System.out.println("G = "+g);
+		System.out.println("Beta1 = "+beta1);
+		System.out.println("-------------------");
+		ImagePlus res = em.createGap(ip, array1, alpha, beta1, t, delta, 0, 0, m, n);
+		int[][] bytesSalida = res.getProcessor().getIntArray();
+		System.out.println("Bytes posteriores a beta1");
+		Utils.printArray(bytesSalida, 0, 0, m, n);
+		
+		
+		System.out.println();
+		System.out.println();
+		System.out.println("----------------------------");
+		System.out.println("Restauramos al bloque original");
+		System.out.println("----------------------------");
+		System.out.println();
+		
+		alpha = ex.getAlpha(matrixM, bytesSalida, 0, 0, delta);
+		System.out.println("-------------------");
+		System.out.println("Alpha = "+alpha);
+		System.out.println("-------------------");
+		res = ex.restoreGapBeta1(res, bytesSalida, alpha, delta * beta1, t, g, 0, 0, m, n);
+		bytesSalida = res.getProcessor().getIntArray();
+		System.out.println("Bytes restaurados");
 		Utils.printArray(bytesSalida, 0, 0, m, n);
 	}
 	
