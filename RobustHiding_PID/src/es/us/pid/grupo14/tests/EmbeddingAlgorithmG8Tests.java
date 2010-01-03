@@ -1,8 +1,6 @@
 package es.us.pid.grupo14.tests;
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -55,7 +53,7 @@ public class EmbeddingAlgorithmG8Tests {
 				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
 				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
 				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
-				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,};
+				-127,-127,-127,-127,-127,-127,-127,-127,-127,-3,-14,-10};
 		data = dataAux;
 	}
 	
@@ -73,7 +71,7 @@ public class EmbeddingAlgorithmG8Tests {
 		int histogramType = val.getHistogramType(img, beta1, beta2);
 		delta = val.getDelta(histogramType);
 		ImagePlus res = emb.embedBits(img, data, t, g, m, n, beta1, beta2, delta);
-		res.show();
+//		res.show();
 		BufferedImage im = res.getBufferedImage();
 		try {
 			ImageIO.write(im, "bmp", new File("tests-files/stego-lena.bmp"));
