@@ -44,8 +44,8 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 		int[][] pixels = stegoImg.getProcessor().getIntArray();
 		
 		//mientras queden bloques
-		for (int i = 0; i < h; i = i + m) {
-			for (int j = 0; j < w; j = j + n) {
+		for (int i = 0; i < (h - m); i = i + m) {
+			for (int j = 0; j < (w - n); j = j + n) {
 				int alpha = getAlpha(matrixM, pixels, i, j, delta);
 				//Nota ¿es necesario reasignar?
 				recoveredImg = restoreGapBeta1(recoveredImg, pixels, beta1, alpha, t, delta, i, j, m, n);
@@ -86,7 +86,7 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 		int[] res = new int[2];
 		int w = stegoImg.getWidth(), h = stegoImg.getHeight();
 		int[][] pixels = stegoImg.getProcessor().getIntArray();
-		int cont0 = 0, cont1 = 0;
+		//int cont0 = 0, cont1 = 0;
 		
 		//obtenemos la distribucion de los alphas
 		for (int i = 0; i < h; i = i + m) {
@@ -103,12 +103,37 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 			}
 		}
 		
-		int alphaCont = 0;
+		int alphaCont = 1;
+		//0 no tiene elemento opuesto
+		int cont0 = dist.get(0);
 		
+		/*
+		 * Ahora que tenemos la distribucion de alphas, y el numero de ceros y unos,
+		 * empezamos a contar desde alpha = 0 para encontrar el intervalo [-T,T] en el que
+		 * tiene que haber n0 ceros (n0 alphas)
+		 * 
+		 * Una vez determinado dicho intervalo, hacemos lo mismo desde -T y T para contar n1
+		 * alphas y obtener G
+		 */
 		while (cont0 < n0){
-			int val = dist.get(alphaCont);
-			
+			int valPos = dist.get(alphaCont);
+			int valNeg = dist.get(-alphaCont);
+			cont0 = cont0 + valPos + valNeg;
+			alphaCont++;
 		}
+		
+		res[0] = alphaCont - 1;
+		
+		int cont1 = 0;
+		while (cont1 < n1){
+			int valPos = dist.get(alphaCont);
+			int valNeg = dist.get(-alphaCont);
+			cont1 = cont1 + valPos + valNeg;
+			alphaCont++;
+		}
+		
+		int adj1 = alphaCont - 1;
+		res[1] = adj1 - 2*res[0];
 		
 		return res;
 	}
@@ -156,7 +181,7 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 		for (int a = i; a < aLimit; a++) {
 			d = 0;
 			for (int b = j; b < bLimit; b++) {
-				alpha = alpha + (delta * matrixM[c][d] * pixels[a][b]);
+				alpha = alpha + (delta * matrixM[c][d] * pixels[b][a]);
 				d++;
 			}
 			c++;
@@ -174,28 +199,28 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 			for (int a = i; a < aLimit; a++) {
 				for (int b = j; b < bLimit; b++) {
 					if ((a % 2) == (b % 2)) {
-						pixel = pixels[a][b] - beta1;
+						pixel = pixels[b][a] - beta1;
 					} else {
-						pixel = pixels[a][b];
+						pixel = pixels[b][a];
 					}
-					ip.putPixel(a, b, pixel);
+					ip.putPixel(b, a, pixel);
 				}
 			}
 		} else if (alpha < -((2*t)+g)) {
 			for (int a = i; a < aLimit; a++) {
 				for (int b = j; b < bLimit; b++) {
 					if ((a % 2) != (b % 2)) {
-						pixel = pixels[a][b] - beta1;
+						pixel = pixels[b][a] - beta1;
 					} else {
-						pixel = pixels[a][b];
+						pixel = pixels[b][a];
 					}
-					ip.putPixel(a, b, pixel);
+					ip.putPixel(b, a, pixel);
 				}
 			}
 		} else {
 			for (int a = i; a < aLimit; a++) {
 				for (int b = j; b < bLimit; b++) {
-					ip.putPixel(a, b, pixels[a][b]);
+					ip.putPixel(b, a, pixels[b][a]);
 				}
 			}
 		}
@@ -212,28 +237,28 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 			for (int a = i; a < aLimit; a++) {
 				for (int b = j; b < bLimit; b++) {
 					if ((a % 2) == (b % 2)) {
-						pixel = pixels[a][b] - beta2;
+						pixel = pixels[b][a] - beta2;
 					} else {
-						pixel = pixels[a][b];
+						pixel = pixels[b][a];
 					}
-					ip.putPixel(a, b, pixel);
+					ip.putPixel(b, a, pixel);
 				}
 			}
 		} else if ((alpha >= -((2*t)+g)) && (alpha < -t)) {
 			for (int a = i; a < aLimit; a++) {
 				for (int b = j; b < bLimit; b++) {
 					if ((a % 2) != (b % 2)) {
-						pixel = pixels[a][b] - beta2;
+						pixel = pixels[b][a] - beta2;
 					} else {
-						pixel = pixels[a][b];
+						pixel = pixels[b][a];
 					}
-					ip.putPixel(a, b, pixel);
+					ip.putPixel(b, a, pixel);
 				}
 			}
 		} else {
 			for (int a = i; a < aLimit; a++) {
 				for (int b = j; b < bLimit; b++) {
-					ip.putPixel(a, b, pixels[a][b]);
+					ip.putPixel(b, a, pixels[b][a]);
 				}
 			}
 		}

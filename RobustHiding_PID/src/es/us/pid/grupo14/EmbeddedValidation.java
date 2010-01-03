@@ -112,6 +112,32 @@ public interface EmbeddedValidation {
    * @return byte [] embedfile array con los bytes del archivo que vamos a inyectar
    */
    public byte[] readFile() throws IOException;
+   
+   
+   /**
+    * Calcula el Peak signal-to-noise ratio de una imagen original y su stego imagen
+    * 
+    * @param original Imagen original
+    * @param stego Stego imagen
+    * @return ratio el PSNR
+    */
+   public double getPSNR(ImagePlus original, ImagePlus stego);
+   
+
+   
+   
+   /**
+    * Metodo para devolver el bit error rate de los datos recuperados 
+    * respecto de los originales
+    * 
+    * @param originalData datos originales embebidos en la imagen
+    * @param size1 cantidad de datos validos de originalData
+    * @param recoveredData datos recuperados de la imagen
+    * @param size2 cantidad de datos validos de recoveredData
+    * @return ber el bit error rate
+    */
+   public double getBitErrorRate(byte[] originalData, byte[] recoveredData, int size);
+   
   
 }
 

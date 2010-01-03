@@ -17,16 +17,27 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 	// Arrays para guardar las frecuencias para el histograma
 	private Hashtable<Integer,Integer> alphasBefore;
 	private Hashtable<Integer,Integer> alphasAfter;
+	
+	private int n0;
+	
+	private int n1;
 
 	public EmbeddingAlgorithmG8Impl() {
+		reset();
+	}
+	
+	private void reset(){
 		alphasBefore = new Hashtable<Integer,Integer>();
 		alphasAfter = new Hashtable<Integer,Integer>();
+		n0 = 0;
+		n1 = 0;
 	}
 
 	@Override
 	public ImagePlus embedBits(ImagePlus img, byte[] bits, int t, int g, int m,
 			int n, int beta1, int beta2, int delta) {
 
+		reset();
 		int w = img.getWidth(), h = img.getHeight();
 		ImageProcessor ip = new ByteProcessor(w, h);
 		ImagePlus res = new ImagePlus("stego-image", ip);
@@ -37,8 +48,8 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 		
 		
 		int[][] pixels = img.getProcessor().getIntArray();
-		int hPixels = pixels.length;
-		int wPixels = pixels[0].length;
+//		int hPixels = pixels.length;
+//		int wPixels = pixels[0].length;
 
 		// mientras queden bloques
 		for (int i = 0; i < (h - m); i = i + m) {
@@ -48,8 +59,11 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 				if (!alphasBefore.containsKey(alpha)) {
 					alphasBefore.put(alpha, 1);
 				}
-				// voy guardando la frecuencia acumulada
-				alphasBefore.put(alpha, alphasBefore.get(alpha) + 1);
+				else{
+					// voy guardando la frecuencia acumulada
+					alphasBefore.put(alpha, alphasBefore.get(alpha) + 1);
+				}
+				
 
 				res = createGap(res, pixels, beta1, alpha, t, delta, i, j, m, n);
 
@@ -60,30 +74,29 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 					bitCont++;
 				}
 			}
-			
-			/**
-			 * TODO: Esto debería de estar en una fución a parte. Calculo la
-			 * frecuencia de los distintos valores de alpha una vez se ha
-			 * realizado la inyección
-			 **/
-			int[][] pixelsStego = res.getProcessor().getIntArray();
-			// Mientras queden bloques (con la stego-imagen)
-			for (int i2 = 0; i2 < (h - m); i2 = i2 + m) {
-				for (int j2 = 0; j2 < (w - n); j2 = j2 + n) {
-					int alphaStego = getAlpha(matrixM, pixelsStego, i2, j2, delta);
-					// voy guardando la frecuencia acumulada
-					if (!alphasAfter.containsKey(alphaStego)) {
-						alphasAfter.put(alphaStego, 1);
-					}
+
+		}
+		
+		/**
+		 * TODO: Esto debería de estar en una fución a parte. Calculo la
+		 * frecuencia de los distintos valores de alpha una vez se ha
+		 * realizado la inyección
+		 **/
+		int[][] pixelsStego = res.getProcessor().getIntArray();
+		// Mientras queden bloques (con la stego-imagen)
+		for (int i2 = 0; i2 < (h - m); i2 = i2 + m) {
+			for (int j2 = 0; j2 < (w - n); j2 = j2 + n) {
+				int alphaStego = getAlpha(matrixM, pixelsStego, i2, j2, delta);
+				// voy guardando la frecuencia acumulada
+				if (!alphasAfter.containsKey(alphaStego)) {
+					alphasAfter.put(alphaStego, 1);
+				}
+				else{
 					alphasAfter.put(alphaStego, alphasAfter.get(alphaStego) + 1);
 				}
 			}
-
-			// Muesto los dos histogramas en pantalla nada más terminar con la
-			// inyección
-			
-
 		}
+		
 		getAlphaDist(alphasBefore, "Distribucion antes de inyectar los datos");
 		getAlphaDist(alphasAfter, "Distribucion despues de inyectar los datos");
 		return res;
@@ -101,6 +114,7 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 		int pixel;
 
 		if (bitValue) {
+			n1++;
 			if (alpha >= 0) {
 				for (int a = i; a < aLimit; a++) {
 					for (int b = j; b < bLimit; b++) {
@@ -126,6 +140,7 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 			}
 
 		} else {
+			n0++;
 			for (int a = i; a < aLimit; a++) {
 				for (int b = j; b < bLimit; b++) {
 					ip.putPixel(b, a, pixels[b][a]);
@@ -300,12 +315,21 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 				.firstElement() - 1;
 		float Ymax = maxFreq + 1, Ymin = minFreq - 1;
 		PlotWindow plot = new PlotWindow(title, "Valores de alpha",
-				"Número de alphas", x, y);
+				"Numero de alphas", x, y);
 		plot.addPoints(x, y, PlotWindow.CIRCLE);
 		plot.setLimits(Xmin, Xmax, Ymin, Ymax);
 		plot.setColor(Color.blue);
 		plot.draw();
-
+		
 	}
-
+	
+	@Override
+	public int getN0(){
+		return n0;
+	}
+	
+	@Override
+	public int getN1(){
+		return n1;
+	}
 }
