@@ -4,8 +4,12 @@ import ij.ImagePlus;
 import ij.gui.GenericDialog;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
+import es.us.pid.grupo14.ExtractionAlgorithm;
+import es.us.pid.grupo14.HidingResult;
 import es.us.pid.grupo14.impl.EmbeddingAlgorithmG8Impl;
 import es.us.pid.grupo14.impl.EmbeddedValidationG8Impl;
+import es.us.pid.grupo14.impl.ExtractionAlgorithmG8Impl;
+
 import java.io.IOException;
 
 public class RobustHiding_PID implements PlugInFilter {
@@ -13,6 +17,8 @@ public class RobustHiding_PID implements PlugInFilter {
 	private ImagePlus imp;
 	private double m=8, n=8;
 	private double t=128, g=64;
+	private double n0=0, n1=0;
+	private double delta=0;
 	private String choice;
 	public static final String INYECCION ="Inyecci—n de datos";
 	public static final String EXTRACCION ="Extracci—n de datos";
@@ -86,6 +92,60 @@ public class RobustHiding_PID implements PlugInFilter {
 		this.choice = d.getNextChoice();
 	}
 	
+	
+	/**
+	 * Genera el panel para introducir los valores necesarios para la extracci—n de datos.
+	 */
+	public void getVariablePanelExtraccion(){
+		
+		GenericDialog d = new GenericDialog("Indique los valores de las siguientes variables", IJ.getInstance());
+		d.addNumericField("Nœmero de filas de la matriz M:", this.m, 0, 3,"m");
+		d.addNumericField("Nœmero de columnas de la matriz M:",this.n, 0, 3, "n");
+		d.addNumericField("Constante T:", this.t, 0, 3, "T");
+		d.addNumericField("Constante G:", this.g, 0, 3, "G");
+		d.addNumericField("Constante delta:", this.g, 0, 3, "G");
+		d.addNumericField("Constante N0:", this.g, 0, 3, "nœmero de ceros");
+		d.addNumericField("Constante N1:", this.g, 0, 3, "nœmero de unos");
+		d.showDialog();
+		if(d.wasCanceled()) 
+			this.imp.close();
+		this.m = d.getNextNumber();
+		if(d.invalidNumber()) {
+			IJ.showMessage("Error", "Valor incorrecto de la variable n. Se debe introducir un entero.");
+			this.imp.close();
+		}
+		this.n = d.getNextNumber();
+		if(d.invalidNumber()) {
+			IJ.showMessage("Error", "Valor incorrecto de la variable m. Se debe introducir un entero.");
+			this.imp.close();
+		}
+		this.t = d.getNextNumber();
+		if(d.invalidNumber()) {
+			IJ.showMessage("Error", "Valor incorrecto de la variable T. Se debe introducir un entero.");
+			this.imp.close();
+		}
+		this.g = d.getNextNumber();
+		if(d.invalidNumber()) {
+			IJ.showMessage("Error", "Valor incorrecto de la variable G. Se debe introducir un entero.");
+			this.imp.close();
+		}
+		this.delta = d.getNextNumber();
+		if(d.invalidNumber()) {
+			IJ.showMessage("Error", "Valor incorrecto de la variable delta. Se debe introducir un entero.");
+			this.imp.close();
+		}
+		this.n0 = d.getNextNumber();
+		if(d.invalidNumber()) {
+			IJ.showMessage("Error", "Valor incorrecto de la variable N0. Se debe introducir un entero.");
+			this.imp.close();
+		}
+		this.n1 = d.getNextNumber();
+		if(d.invalidNumber()) {
+			IJ.showMessage("Error", "Valor incorrecto de la variable N1. Se debe introducir un entero.");
+			this.imp.close();
+		}
+	}
+	
 	public void inyeccion(){
 		
 		//Instancias para validar e inyectar informaci—n en la imagen
@@ -126,7 +186,8 @@ public class RobustHiding_PID implements PlugInFilter {
 		res.show();
 		
 		IJ.showMessage("Los datos se han terminado de inyectar.\n" +
-				"La inyecci—n se ha realizado con un valor de delta igual a " + delta +". \n"
+				"La inyecci—n se ha realizado con un valor de delta igual a " + delta +", \n" +
+				 ", con un nœmero de ceros igual a "+ emb.getN0() + "\n y un nœmero de unos igual a" + emb.getN1()
 				+ "Este valor se le pedir‡ cuando quiera extraer la informaci—n de la imagen \n " +
 				   "resultante en el proceso de inyecci—n");
 	}
@@ -135,6 +196,14 @@ public class RobustHiding_PID implements PlugInFilter {
 	 * Realiza la inyecci—n de datos en una imagen.
 	 */
 	public void extraccion(){
-		//TODO: extraccion de datos
+		ExtractionAlgorithm ext = new ExtractionAlgorithmG8Impl();
+		getVariablePanelExtraccion();
+		HidingResult hres = new HidingResult();
+		hres = ext.extractBits(this.imp, (int) m, (int) n, (int) t, (int) g, (int) delta, (int) n0, (int) n1);
+		String texto = new String(hres.getData());
+		IJ.showMessage("El texto que se ha obtenido de la extracci—n es: \n" + texto);
+		ImagePlus res = hres.getImg();
+		res.show();
+		
 	}
 }
