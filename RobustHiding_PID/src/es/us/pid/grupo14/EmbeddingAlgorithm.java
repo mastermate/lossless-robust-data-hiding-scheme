@@ -18,13 +18,13 @@ public interface EmbeddingAlgorithm {
 	 * @param g int umbral g
 	 * @param m int numero de filas de M
 	 * @param n int numero de columnas de M
-	 * @param T int umbral T
+	 * @param t int umbral T
 	 * @param beta1 int parametro beta1
 	 * @param beta2 int parametro beta2
 	 * @param delta int parametro delta
 	 * @return ImagePlus imagen con la informacion oculta
 	 */
-	public ImagePlus embedBits(ImagePlus img, byte[] bits, int g, int m, int n, int T,
+	public ImagePlus embedBits(ImagePlus img, byte[] bits, int g, int m, int n, int t,
 									int beta1, int beta2, int delta);
 	
 }
