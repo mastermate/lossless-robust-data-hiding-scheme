@@ -1,7 +1,9 @@
 package es.us.pid.grupo14.tests;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -80,5 +82,35 @@ public class EmbeddingAlgorithmG8Tests {
 		}
 
 	}
+	
+	@Test
+	public void test2(){
+//		img = new ImagePlus("tests-files/Us1-Gray.bmp");
+//		FileInputStream fis = new FileInputStream("tests-files/prueba.txt");
+//		ByteArrayOutputStream
+//		fis.
+//		byte[] dataAux = fis.
+		m = 8;
+		n = 8;
+		t = 128;
+		g = 64;
+		beta1 = val.getBeta1(g, t, m, n);
+		beta2 = val.getBeta2(g, t, m, n);
+		System.out.println("Beta 1 = "+beta1);
+		System.out.println("Beta 2 = "+beta2);
+		int histogramType = val.getHistogramType(img, beta1, beta2);
+		delta = val.getDelta(histogramType);
+		ImagePlus res = emb.embedBits(img, data, t, g, m, n, beta1, beta2, delta);
+//		res.show();
+		BufferedImage im = res.getBufferedImage();
+		try {
+			ImageIO.write(im, "bmp", new File("tests-files/stego-lena.bmp"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	
 	
 }

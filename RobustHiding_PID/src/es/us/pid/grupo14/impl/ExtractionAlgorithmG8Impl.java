@@ -1,10 +1,13 @@
 package es.us.pid.grupo14.impl;
 
 import ij.ImagePlus;
+import ij.io.FileInfo;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 
 import java.io.ByteArrayOutputStream;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import es.us.pid.grupo14.ExtractionAlgorithm;
 import es.us.pid.grupo14.HidingResult;
@@ -12,10 +15,21 @@ import es.us.pid.grupo14.HidingResult;
 public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 
 	@Override
-	public HidingResult extractBits(ImagePlus stegoImg, int m, int n, int t,
-			int g, int delta, int n0, int n1) {
+	public HidingResult extractBits(ImagePlus stegoImg, int m, int n, int t1,
+			int g1, int delta, int n0, int n1) {
 		//Hace la extracción de una imagen que no ha sido comprimida
 		// TODO Hacerlo para cuando la imagen esté comprimida
+		int t, g;
+		int[][] matrixM = getMatrixM(m, n);
+		if (isJpgImage(stegoImg)){
+			int[] tAndG = getNewTandG(stegoImg,n0,n1,m,n,delta,matrixM);
+			t = tAndG[0];
+			g = tAndG[1];
+		}
+		else{
+			t = t1;
+			g = g1;
+		}
 		int w = stegoImg.getWidth(), h = stegoImg.getHeight();
 		int beta1 = delta * getBeta1(g, t, m, n);
 		int beta2 = delta * getBeta2(g,t,m,n);
@@ -23,7 +37,7 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 		ImagePlus recoveredImg = new ImagePlus("recovered-image",ip);
 		recoveredImg.getProcessor().insert(stegoImg.getProcessor(), 0, 0);
 		int bitCount = 0;
-		int[][] matrixM = getMatrixM(m, n);
+		
 		int dataSize = (n0 + n1);
 		ByteArrayOutputStream data = new ByteArrayOutputStream();
 		byte actualByte=0;
@@ -64,6 +78,49 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 		result.setImg(recoveredImg);
 		result.setData(data.toByteArray());
 		return result;
+	}
+
+	private int[] getNewTandG(ImagePlus stegoImg, int n0, int n1, int m, int n, int delta, int[][] matrixM) {
+		//en la posicion 0 almacenamos T, y en la 1 G
+		SortedMap<Integer,Integer> dist = new TreeMap<Integer,Integer>();
+		int[] res = new int[2];
+		int w = stegoImg.getWidth(), h = stegoImg.getHeight();
+		int[][] pixels = stegoImg.getProcessor().getIntArray();
+		int cont0 = 0, cont1 = 0;
+		
+		//obtenemos la distribucion de los alphas
+		for (int i = 0; i < h; i = i + m) {
+			for (int j = 0; j < w; j = j + n) {
+				int alpha = getAlpha(matrixM, pixels, i, j, delta);
+				int value;
+				if (dist.containsKey(alpha)){
+					value = dist.get(alpha) + 1;
+				}
+				else{
+					value = 1;
+				}
+				dist.put(alpha, value);
+			}
+		}
+		
+		int alphaCont = 0;
+		
+		while (cont0 < n0){
+			int val = dist.get(alphaCont);
+			
+		}
+		
+		return res;
+	}
+
+	private boolean isJpgImage(ImagePlus stegoImg) {
+		FileInfo fi = stegoImg.getFileInfo();
+		if (fi.fileFormat == FileInfo.JPEG){
+			return true;
+		}
+		else{
+			return false;
+		}	
 	}
 
 	private boolean isInOneZone(int t, int g, int alpha) {
