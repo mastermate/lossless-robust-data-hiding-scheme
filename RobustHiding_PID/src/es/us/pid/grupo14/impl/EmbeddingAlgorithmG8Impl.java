@@ -17,16 +17,27 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 	// Arrays para guardar las frecuencias para el histograma
 	private Hashtable<Integer,Integer> alphasBefore;
 	private Hashtable<Integer,Integer> alphasAfter;
+	
+	private int n0;
+	
+	private int n1;
 
 	public EmbeddingAlgorithmG8Impl() {
+		reset();
+	}
+	
+	private void reset(){
 		alphasBefore = new Hashtable<Integer,Integer>();
 		alphasAfter = new Hashtable<Integer,Integer>();
+		n0 = 0;
+		n1 = 0;
 	}
 
 	@Override
 	public ImagePlus embedBits(ImagePlus img, byte[] bits, int t, int g, int m,
 			int n, int beta1, int beta2, int delta) {
 
+		reset();
 		int w = img.getWidth(), h = img.getHeight();
 		ImageProcessor ip = new ByteProcessor(w, h);
 		ImagePlus res = new ImagePlus("stego-image", ip);
@@ -37,8 +48,8 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 		
 		
 		int[][] pixels = img.getProcessor().getIntArray();
-		int hPixels = pixels.length;
-		int wPixels = pixels[0].length;
+//		int hPixels = pixels.length;
+//		int wPixels = pixels[0].length;
 
 		// mientras queden bloques
 		for (int i = 0; i < (h - m); i = i + m) {
@@ -103,6 +114,7 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 		int pixel;
 
 		if (bitValue) {
+			n1++;
 			if (alpha >= 0) {
 				for (int a = i; a < aLimit; a++) {
 					for (int b = j; b < bLimit; b++) {
@@ -128,6 +140,7 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 			}
 
 		} else {
+			n0++;
 			for (int a = i; a < aLimit; a++) {
 				for (int b = j; b < bLimit; b++) {
 					ip.putPixel(b, a, pixels[b][a]);
@@ -310,4 +323,13 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 		
 	}
 	
+	@Override
+	public int getN0(){
+		return n0;
+	}
+	
+	@Override
+	public int getN1(){
+		return n1;
+	}
 }

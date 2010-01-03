@@ -27,4 +27,8 @@ public interface EmbeddingAlgorithm {
 	public ImagePlus embedBits(ImagePlus img, byte[] bits, int g, int m, int n, int T,
 									int beta1, int beta2, int delta);
 	
+	
+	public int getN0();
+	
+	public int getN1();
 }
