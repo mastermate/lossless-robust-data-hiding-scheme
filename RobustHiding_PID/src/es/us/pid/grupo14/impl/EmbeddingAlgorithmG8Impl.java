@@ -34,12 +34,15 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 		int bitCont = 0;
 		int dataSize = bits.length * 8;
 		int[][] matrixM = getMatrixM(m, n);
-
+		
+		
 		int[][] pixels = img.getProcessor().getIntArray();
+		int hPixels = pixels.length;
+		int wPixels = pixels[0].length;
 
 		// mientras queden bloques
-		for (int i = 0; i < h; i = i + m) {
-			for (int j = 0; j < w; j = j + n) {
+		for (int i = 0; i < (h - m); i = i + m) {
+			for (int j = 0; j < (w - n); j = j + n) {
 				int alpha = getAlpha(matrixM, pixels, i, j, delta);
 
 				if (!alphasBefore.containsKey(alpha)) {
@@ -57,7 +60,7 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 					bitCont++;
 				}
 			}
-
+			
 			/**
 			 * TODO: Esto debería de estar en una fución a parte. Calculo la
 			 * frecuencia de los distintos valores de alpha una vez se ha
@@ -65,15 +68,14 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 			 **/
 			int[][] pixelsStego = res.getProcessor().getIntArray();
 			// Mientras queden bloques (con la stego-imagen)
-			for (int i2 = 0; i2 < h; i2 = i2 + m) {
-				for (int j2 = 0; j2 < w; j2 = j2 + n) {
+			for (int i2 = 0; i2 < (h - m); i2 = i2 + m) {
+				for (int j2 = 0; j2 < (w - n); j2 = j2 + n) {
 					int alphaStego = getAlpha(matrixM, pixelsStego, i2, j2, delta);
 					// voy guardando la frecuencia acumulada
 					if (!alphasAfter.containsKey(alphaStego)) {
 						alphasAfter.put(alphaStego, 1);
 					}
-					alphasAfter
-							.put(alphaStego, alphasAfter.get(alphaStego) + 1);
+					alphasAfter.put(alphaStego, alphasAfter.get(alphaStego) + 1);
 				}
 			}
 
@@ -103,22 +105,22 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 				for (int a = i; a < aLimit; a++) {
 					for (int b = j; b < bLimit; b++) {
 						if ((a % 2) == (b % 2)) {
-							pixel = pixels[a][b] + (delta * beta2);
+							pixel = pixels[b][a] + (delta * beta2);
 						} else {
-							pixel = pixels[a][b];
+							pixel = pixels[b][a];
 						}
-						ip.putPixel(a, b, pixel);
+						ip.putPixel(b, a, pixel);
 					}
 				}
 			} else {
 				for (int a = i; a < aLimit; a++) {
 					for (int b = j; b < bLimit; b++) {
 						if ((a % 2) != (b % 2)) {
-							pixel = pixels[a][b] + (delta * beta2);
+							pixel = pixels[b][a] + (delta * beta2);
 						} else {
-							pixel = pixels[a][b];
+							pixel = pixels[b][a];
 						}
-						ip.putPixel(a, b, pixel);
+						ip.putPixel(b, a, pixel);
 					}
 				}
 			}
@@ -126,7 +128,7 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 		} else {
 			for (int a = i; a < aLimit; a++) {
 				for (int b = j; b < bLimit; b++) {
-					ip.putPixel(a, b, pixels[a][b]);
+					ip.putPixel(b, a, pixels[b][a]);
 				}
 			}
 		}
@@ -144,28 +146,28 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 			for (int a = i; a < aLimit; a++) {
 				for (int b = j; b < bLimit; b++) {
 					if ((a % 2) == (b % 2)) {
-						pixel = pixels[a][b] + (delta * beta1);
+						pixel = pixels[b][a] + (delta * beta1);
 					} else {
-						pixel = pixels[a][b];
+						pixel = pixels[b][a];
 					}
-					ip.putPixel(a, b, pixel);
+					ip.putPixel(b, a, pixel);
 				}
 			}
 		} else if (alpha < -t) {
 			for (int a = i; a < aLimit; a++) {
 				for (int b = j; b < bLimit; b++) {
 					if ((a % 2) != (b % 2)) {
-						pixel = pixels[a][b] + (delta * beta1);
+						pixel = pixels[b][a] + (delta * beta1);
 					} else {
-						pixel = pixels[a][b];
+						pixel = pixels[b][a];
 					}
-					ip.putPixel(a, b, pixel);
+					ip.putPixel(b, a, pixel);
 				}
 			}
 		} else {
 			for (int a = i; a < aLimit; a++) {
 				for (int b = j; b < bLimit; b++) {
-					ip.putPixel(a, b, pixels[a][b]);
+					ip.putPixel(b, a, pixels[b][a]);
 				}
 			}
 		}
@@ -180,7 +182,7 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 		for (int a = i; a < aLimit; a++) {
 			d = 0;
 			for (int b = j; b < bLimit; b++) {
-				alpha = alpha + (delta * matrixM[c][d] * pixels[a][b]);
+				alpha = alpha + (delta * matrixM[c][d] * pixels[b][a]);
 				d++;
 			}
 			c++;
