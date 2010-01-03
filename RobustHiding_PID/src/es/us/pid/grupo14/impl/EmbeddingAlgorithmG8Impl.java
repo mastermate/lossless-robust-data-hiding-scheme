@@ -48,8 +48,11 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 				if (!alphasBefore.containsKey(alpha)) {
 					alphasBefore.put(alpha, 1);
 				}
-				// voy guardando la frecuencia acumulada
-				alphasBefore.put(alpha, alphasBefore.get(alpha) + 1);
+				else{
+					// voy guardando la frecuencia acumulada
+					alphasBefore.put(alpha, alphasBefore.get(alpha) + 1);
+				}
+				
 
 				res = createGap(res, pixels, beta1, alpha, t, delta, i, j, m, n);
 
@@ -60,30 +63,29 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 					bitCont++;
 				}
 			}
-			
-			/**
-			 * TODO: Esto debería de estar en una fución a parte. Calculo la
-			 * frecuencia de los distintos valores de alpha una vez se ha
-			 * realizado la inyección
-			 **/
-			int[][] pixelsStego = res.getProcessor().getIntArray();
-			// Mientras queden bloques (con la stego-imagen)
-			for (int i2 = 0; i2 < (h - m); i2 = i2 + m) {
-				for (int j2 = 0; j2 < (w - n); j2 = j2 + n) {
-					int alphaStego = getAlpha(matrixM, pixelsStego, i2, j2, delta);
-					// voy guardando la frecuencia acumulada
-					if (!alphasAfter.containsKey(alphaStego)) {
-						alphasAfter.put(alphaStego, 1);
-					}
+
+		}
+		
+		/**
+		 * TODO: Esto debería de estar en una fución a parte. Calculo la
+		 * frecuencia de los distintos valores de alpha una vez se ha
+		 * realizado la inyección
+		 **/
+		int[][] pixelsStego = res.getProcessor().getIntArray();
+		// Mientras queden bloques (con la stego-imagen)
+		for (int i2 = 0; i2 < (h - m); i2 = i2 + m) {
+			for (int j2 = 0; j2 < (w - n); j2 = j2 + n) {
+				int alphaStego = getAlpha(matrixM, pixelsStego, i2, j2, delta);
+				// voy guardando la frecuencia acumulada
+				if (!alphasAfter.containsKey(alphaStego)) {
+					alphasAfter.put(alphaStego, 1);
+				}
+				else{
 					alphasAfter.put(alphaStego, alphasAfter.get(alphaStego) + 1);
 				}
 			}
-
-			// Muesto los dos histogramas en pantalla nada más terminar con la
-			// inyección
-			
-
 		}
+		
 		getAlphaDist(alphasBefore, "Distribucion antes de inyectar los datos");
 		getAlphaDist(alphasAfter, "Distribucion despues de inyectar los datos");
 		return res;
@@ -300,12 +302,12 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 				.firstElement() - 1;
 		float Ymax = maxFreq + 1, Ymin = minFreq - 1;
 		PlotWindow plot = new PlotWindow(title, "Valores de alpha",
-				"Número de alphas", x, y);
+				"Numero de alphas", x, y);
 		plot.addPoints(x, y, PlotWindow.CIRCLE);
 		plot.setLimits(Xmin, Xmax, Ymin, Ymax);
 		plot.setColor(Color.blue);
 		plot.draw();
-
+		
 	}
-
+	
 }

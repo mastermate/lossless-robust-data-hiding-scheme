@@ -1,1 +1,1 @@
-Little test for stego data hidding
+Little test for stego-data hidding
