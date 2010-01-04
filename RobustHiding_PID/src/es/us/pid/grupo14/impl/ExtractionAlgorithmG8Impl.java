@@ -78,19 +78,22 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 		result.setImg(recoveredImg);
 		result.setData(data.toByteArray());
 		return result;
-	}
-
+	} 
+	
 	private int[] getNewTandG(ImagePlus stegoImg, int n0, int n1, int m, int n, int delta, int[][] matrixM) {
 		//en la posicion 0 almacenamos T, y en la 1 G
 		SortedMap<Integer,Integer> dist = new TreeMap<Integer,Integer>();
 		int[] res = new int[2];
 		int w = stegoImg.getWidth(), h = stegoImg.getHeight();
 		int[][] pixels = stegoImg.getProcessor().getIntArray();
+		int dataBitsSize = n0 + n1;
+		int contBlocks = 0;
 		//int cont0 = 0, cont1 = 0;
 		
-		//obtenemos la distribucion de los alphas
-		for (int i = 0; i < h; i = i + m) {
-			for (int j = 0; j < w; j = j + n) {
+		//obtenemos la distribucion solo de los alphas que se han usado
+		//para embeber bits
+		for (int i = 0; (i < h) && (contBlocks <= dataBitsSize); i = i + m) {
+			for (int j = 0; (j < w) && (contBlocks <= dataBitsSize); j = j + n) {
 				int alpha = getAlpha(matrixM, pixels, i, j, delta);
 				int value;
 				if (dist.containsKey(alpha)){
@@ -100,6 +103,7 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 					value = 1;
 				}
 				dist.put(alpha, value);
+				contBlocks++;
 			}
 		}
 		
@@ -116,19 +120,29 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 		 * alphas y obtener G
 		 */
 		while (cont0 < n0){
-			int valPos = dist.get(alphaCont);
-			int valNeg = dist.get(-alphaCont);
-			cont0 = cont0 + valPos + valNeg;
+			if (dist.containsKey(alphaCont)){
+				int valPos = dist.get(alphaCont);
+				cont0 = cont0 + valPos;
+			}
+			if (dist.containsKey(-alphaCont)){
+				int valNeg = dist.get(-alphaCont);
+				cont0 = cont0 + valNeg;
+			}
 			alphaCont++;
 		}
 		
 		res[0] = alphaCont - 1;
 		
-		int cont1 = 0;
+		int cont1 = cont0 - n0;
 		while (cont1 < n1){
-			int valPos = dist.get(alphaCont);
-			int valNeg = dist.get(-alphaCont);
-			cont1 = cont1 + valPos + valNeg;
+			if (dist.containsKey(alphaCont)){
+				int valPos = dist.get(alphaCont);
+				cont1 = cont1 + valPos;
+			}
+			if (dist.containsKey(-alphaCont)){
+				int valNeg = dist.get(-alphaCont);
+				cont1 = cont1 + valNeg;
+			}
 			alphaCont++;
 		}
 		
@@ -139,12 +153,18 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 	}
 
 	private boolean isJpgImage(ImagePlus stegoImg) {
+		//FIXME hacer que este metodo rule!!!!
 		FileInfo fi = stegoImg.getFileInfo();
-		if (fi.fileFormat == FileInfo.JPEG){
+		System.out.println("FileInfo Compression = "+fi.compression);
+		System.out.println("FileInfo format = "+fi.fileFormat);
+		System.out.println("FileInfo type = "+fi.fileType);
+		System.out.println("FileInfo info = "+fi.info);
+		System.out.println("FileInfo JPG = "+FileInfo.JPEG);
+		if (fi.fileType == FileInfo.JPEG){
 			return true;
 		}
 		else{
-			return false;
+			return true;
 		}	
 	}
 
