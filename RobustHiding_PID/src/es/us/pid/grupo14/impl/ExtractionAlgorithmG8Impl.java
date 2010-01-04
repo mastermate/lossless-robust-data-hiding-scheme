@@ -154,18 +154,25 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 
 	private boolean isJpgImage(ImagePlus stegoImg) {
 		//FIXME hacer que este metodo rule!!!!
-		FileInfo fi = stegoImg.getFileInfo();
-		System.out.println("FileInfo Compression = "+fi.compression);
-		System.out.println("FileInfo format = "+fi.fileFormat);
-		System.out.println("FileInfo type = "+fi.fileType);
-		System.out.println("FileInfo info = "+fi.info);
-		System.out.println("FileInfo JPG = "+FileInfo.JPEG);
-		if (fi.fileType == FileInfo.JPEG){
+		String imgName = stegoImg.getTitle();
+		if (imgName.endsWith(".jpg") || imgName.endsWith(".jpeg")){
 			return true;
 		}
 		else{
-			return true;
-		}	
+			return false;
+		}
+//		FileInfo fi = stegoImg.getFileInfo();
+//		System.out.println("FileInfo Compression = "+fi.compression);
+//		System.out.println("FileInfo format = "+fi.fileFormat);
+//		System.out.println("FileInfo type = "+fi.fileType);
+//		System.out.println("FileInfo info = "+fi.info);
+//		System.out.println("FileInfo JPG = "+FileInfo.JPEG);
+//		if (fi.fileType == FileInfo.JPEG){
+//			return true;
+//		}
+//		else{
+//			return true;
+//		}	
 	}
 
 	private boolean isInOneZone(int t, int g, int alpha) {
