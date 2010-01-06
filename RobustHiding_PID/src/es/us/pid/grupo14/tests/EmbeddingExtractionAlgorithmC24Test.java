@@ -80,8 +80,8 @@ public class EmbeddingExtractionAlgorithmC24Test {
 		delta = val.getDelta(histogramType);
 		System.out.println(delta);
 		
-		byte[] dataAux = {-3,-14,-10, 1,2,3,4}; //mas de 7 bytes se corrompe parece
-		data = dataAux;
+//		byte[] dataAux = {-3,-14,-10, 1,2,3,4}; //mas de 7 bytes se corrompe parece
+//		data = dataAux;
 		
 		ImagePlus res = emb.embedBits(img, data, g, m, n, t, beta1, beta2, delta);
 		System.out.println("Antes");
@@ -121,8 +121,8 @@ public class EmbeddingExtractionAlgorithmC24Test {
 	@Test
 	public void test2(){
 		
-		byte[] dataAux = {-3,-14,-10, 1,2,3,4};
-		data = dataAux;
+//		byte[] dataAux = {-3,-14,-10, 1,2,3,4};
+//		data = dataAux;
 		
 		m = 8;
 		n = 8;
@@ -202,8 +202,6 @@ public class EmbeddingExtractionAlgorithmC24Test {
 	@Test
 	public void testEmbeddingLena(){		
 		img = new ImagePlus("tests-files/lena512color.bmp");
-		byte[] dataAux = {-3,-14,-10, 1,2,3,4};
-		data = dataAux;
 		m = 8;
 		n = 8;
 		t = 128;
@@ -250,9 +248,6 @@ public class EmbeddingExtractionAlgorithmC24Test {
 	//Extraemos del canal B
 	@Test
 	public void testExtractingLena(){
-		//se corrompen a partir del noveno byte
-		byte[] dataAux = {-3,-14,-10, 1,2,3,4};
-		data = dataAux;
 		m = 8;
 		n = 8;
 		t = 128;
@@ -285,8 +280,6 @@ public class EmbeddingExtractionAlgorithmC24Test {
 	@Test
 	public void testEmbeddingLenaR(){		
 		img = new ImagePlus("tests-files/lena512color.bmp");
-		byte[] dataAux = {-3,-14,-10, 1,2,3,4};
-		data = dataAux;
 		m = 8;
 		n = 8;
 		t = 128;
@@ -333,9 +326,6 @@ public class EmbeddingExtractionAlgorithmC24Test {
 	//Extraemos del canal R
 	@Test
 	public void testExtractingLenaR(){
-		//se corrompen a partir del noveno byte
-		byte[] dataAux = {-3,-14,-10, 1,2,3,4};
-		data = dataAux;
 		m = 8;
 		n = 8;
 		t = 128;
@@ -369,8 +359,6 @@ public class EmbeddingExtractionAlgorithmC24Test {
 	@Test
 	public void testEmbeddingLenaG(){		
 		img = new ImagePlus("tests-files/lena512color.bmp");
-		byte[] dataAux = {-3,-14,-10, 1,2,3,4};
-		data = dataAux;
 		m = 8;
 		n = 8;
 		t = 128;
@@ -417,9 +405,6 @@ public class EmbeddingExtractionAlgorithmC24Test {
 	//Extraemos del canal G
 	@Test
 	public void testExtractingLenaG(){
-		//se corrompen a partir del noveno byte
-		byte[] dataAux = {-3,-14,-10, 1,2,3,4};
-		data = dataAux;
 		m = 8;
 		n = 8;
 		t = 128;

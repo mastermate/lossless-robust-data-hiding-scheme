@@ -49,8 +49,8 @@ public class EmbeddingAlgorithmC24Impl implements EmbeddingAlgorithm {
 		int[][] matrixM = getMatrixM(m, n);
 
 		// mientras queden bloques
-		for (int i = 0; i < (h - m); i = i + m) {
-			for (int j = 0; j < (w - n); j = j + n) {
+		for (int i = 0; i <= (h - m); i = i + m) {
+			for (int j = 0; j <= (w - n); j = j + n) {
 				int alpha = getAlpha(matrixM, img.getProcessor(), i, j, delta);
 
 				if (!alphasBefore.containsKey(alpha)) {
