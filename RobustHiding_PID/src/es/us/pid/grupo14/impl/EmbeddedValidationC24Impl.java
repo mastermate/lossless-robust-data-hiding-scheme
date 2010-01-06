@@ -63,7 +63,9 @@ public class EmbeddedValidationC24Impl implements EmbeddedValidation {
 	public int getHistogramType(ImagePlus img, int beta1, int beta2) {
 		//segun la formula, beta1 siempre sera mayor que beta2
 		int res;
-		int[] histogram = img.getProcessor().getHistogram();
+		int[] pixel = new int[3];
+		ImageProcessor ip = img.getProcessor();
+		int[] histogram = ip.getHistogram();
 		int min = Integer.MAX_VALUE , max = Integer.MIN_VALUE,aux;
 		
 		for (int i = 0; i < histogram.length; i++) {
@@ -76,7 +78,21 @@ public class EmbeddedValidationC24Impl implements EmbeddedValidation {
 			}
 		}
 		
-		int bitDepth = img.getBitDepth()/4;
+//		for (int i = 0; i < img.getHeight(); i++) {
+//			for (int j = 0; j < img.getWidth(); j++) {
+//				pixel = ip.getPixel(i, j, pixel);
+//				aux = pixel[selectedChannel];
+//				
+//				if (aux < min) {
+//					min = aux;
+//				}
+//				if (aux > max) {
+//					max = aux;
+//				}
+//			}
+//		}
+		
+		int bitDepth = img.getBitDepth()/3;
 		int maxLevel = (int)Math.pow(2, bitDepth) - 1;
 		int gap1 = min, gap2 = maxLevel - max;
 		if (beta1 >= gap1){
@@ -214,5 +230,18 @@ public class EmbeddedValidationC24Impl implements EmbeddedValidation {
 			break;
 		}
 		return res;
+	}
+
+	@Override
+	public double getBitErrorRate(byte[] originalData, byte[] recoveredData,
+			int size) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double getPSNR(ImagePlus original, ImagePlus stego) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

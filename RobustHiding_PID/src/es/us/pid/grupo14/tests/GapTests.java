@@ -250,76 +250,161 @@ public class GapTests {
 	 * 
 	 * La imagen es a color y lo meteremos en el canal B
 	 */
-	@Test
-	public void test4a(){
-		//para alpha > T en valor absoluto
-		array1 = Utils.createRandomIntArray(10, 20);
-		ip = new ImagePlus();
-		ImageProcessor ipc = new ColorProcessor(10, 20);
-		ipc.setIntArray(array1);
-		ip.setProcessor("processor", ipc);
-		System.out.println();
-		System.out.println();
-		System.out.println("----------------------------");
-		System.out.println("|Alpha| > T ---- Delta = 1");
-		System.out.println("----------------------------");
-		System.out.println("Bytes anteriores a beta1");
-		Utils.printArray(array1, 0, 0, m, n);
-		delta = 1;
-		int alpha = emc.getAlpha(matrixM, array1, 0, 0, 1);
-		int t = Math.abs(alpha) - 1;
-		int g = 5;
-		beta1 = evc.getBeta1(g, t, m, n);
-		System.out.println("-------------------");
-		System.out.println("Alpha = "+alpha);
-		System.out.println("T = "+t);
-		System.out.println("G = "+g);
-		System.out.println("Beta1 = "+beta1);
-		System.out.println("-------------------");
-		ImagePlus res = emc.createGap(ip, array1, alpha, beta1, t, delta, 0, 0, m, n);
-		int[][] bytesSalida = res.getProcessor().getIntArray();
-		System.out.println("Bytes posteriores a beta1");
-		Utils.printArray(bytesSalida, 0, 0, m, n);
-	}
-	
-	/*
-	 * |Alpha| > T, debe sumar beta1 a unas posiciones u otras dependiendo de
-	 * si alpha es negativo o positivo
-	 * 
-	 * Delta = 1
-	 * 
-	 * La imagen es a color y lo meteremos en el canal G
-	 */
-	@Test
-	public void test4b(){
-		//para alpha > T en valor absoluto
-		array1 = Utils.createRandomIntArray(10, 20);
-		ip = new ImagePlus();
-		ImageProcessor ipc = new ColorProcessor(10, 20);
-		ipc.setIntArray(array1);
-		ip.setProcessor("processor", ipc);
-		System.out.println();
-		System.out.println();
-		System.out.println("----------------------------");
-		System.out.println("|Alpha| > T ---- Delta = 1");
-		System.out.println("----------------------------");
-		System.out.println("Bytes anteriores a beta1");
-		Utils.printArray(array1, 0, 0, m, n);
-		delta = 1;
-		int alpha = emc.getAlpha(matrixM, array1, 0, 0, 1);
-		int t = Math.abs(alpha) - 1;
-		int g = 5;
-		beta1 = evc.getBeta1(g, t, m, n);
-		System.out.println("-------------------");
-		System.out.println("Alpha = "+alpha);
-		System.out.println("T = "+t);
-		System.out.println("G = "+g);
-		System.out.println("Beta1 = "+beta1);
-		System.out.println("-------------------");
-		emc.setSelectedChannel(1);
-		ImagePlus res = emc.createGap(ip, array1, alpha, beta1, t, delta, 0, 0, m, n);
-		int[][] bytesSalida = res.getProcessor().getIntArray();
-		System.out.println("Bytes posteriores a beta1, canal usado: "+emc.getSelectedChannel());
-		Utils.printArray(bytesSalida, 0, 0, m, n);
-	}
+//	@Test
+//	public void test4a(){
+//		//para alpha > T en valor absoluto
+//		array1 = Utils.createRandomIntArray(10, 20);
+//		ip = new ImagePlus();
+//		ImageProcessor ipc = new ColorProcessor(10, 20);
+//		ipc.setIntArray(array1);
+//		ip.setProcessor("processor", ipc);
+//		System.out.println();
+//		System.out.println();
+//		System.out.println("----------------------------");
+//		System.out.println("|Alpha| > T ---- Delta = 1");
+//		System.out.println("----------------------------");
+//		System.out.println("Bytes anteriores a beta1");
+//		Utils.printArray(array1, 0, 0, m, n);
+//		delta = 1;
+//		int alpha = emc.getAlpha(matrixM, array1, 0, 0, 1);
+//		int t = Math.abs(alpha) - 1;
+//		int g = 5;
+//		beta1 = evc.getBeta1(g, t, m, n);
+//		System.out.println("-------------------");
+//		System.out.println("Alpha = "+alpha);
+//		System.out.println("T = "+t);
+//		System.out.println("G = "+g);
+//		System.out.println("Beta1 = "+beta1);
+//		System.out.println("-------------------");
+//		ImagePlus res = emc.createGap(ip, array1, alpha, beta1, t, delta, 0, 0, m, n);
+//		int[][] bytesSalida = res.getProcessor().getIntArray();
+//		System.out.println("Bytes posteriores a beta1");
+//		Utils.printArray(bytesSalida, 0, 0, m, n);
+//	}
+//	
+//	/*
+//	 * |Alpha| > T, debe sumar beta1 a unas posiciones u otras dependiendo de
+//	 * si alpha es negativo o positivo
+//	 * 
+//	 * Delta = 1
+//	 * 
+//	 * La imagen es a color y lo meteremos en el canal G
+//	 */
+//	@Test
+//	public void test4b(){
+//		//para alpha > T en valor absoluto
+//		array1 = Utils.createRandomIntArray(10, 20);
+//		ip = new ImagePlus();
+//		ImageProcessor ipc = new ColorProcessor(10, 20);
+//		ipc.setIntArray(array1);
+//		ip.setProcessor("processor", ipc);
+//		System.out.println();
+//		System.out.println();
+//		System.out.println("----------------------------");
+//		System.out.println("|Alpha| > T ---- Delta = 1");
+//		System.out.println("----------------------------");
+//		System.out.println("Bytes anteriores a beta1");
+//		Utils.printArray(array1, 0, 0, m, n);
+//		delta = 1;
+//		int alpha = emc.getAlpha(matrixM, array1, 0, 0, 1);
+//		int t = Math.abs(alpha) - 1;
+//		int g = 5;
+//		beta1 = evc.getBeta1(g, t, m, n);
+//		System.out.println("-------------------");
+//		System.out.println("Alpha = "+alpha);
+//		System.out.println("T = "+t);
+//		System.out.println("G = "+g);
+//		System.out.println("Beta1 = "+beta1);
+//		System.out.println("-------------------");
+//		emc.setSelectedChannel(1);
+//		ImagePlus res = emc.createGap(ip, array1, alpha, beta1, t, delta, 0, 0, m, n);
+//		int[][] bytesSalida = res.getProcessor().getIntArray();
+//		System.out.println("Bytes posteriores a beta1, canal usado: "+emc.getSelectedChannel());
+//		Utils.printArray(bytesSalida, 0, 0, m, n);
+//	}
+//	
+//	/*
+//	 * |Alpha| > T, debe sumar beta1 a unas posiciones u otras dependiendo de
+//	 * si alpha es negativo o positivo
+//	 * 
+//	 * Delta = 1
+//	 * 
+//	 * La imagen es a color y lo meteremos en el canal R
+//	 */
+//	@Test
+//	public void test4c(){
+//		//para alpha > T en valor absoluto
+//		array1 = Utils.createRandomIntArray(10, 20);
+//		ip = new ImagePlus();
+//		ImageProcessor ipc = new ColorProcessor(10, 20);
+//		ipc.setIntArray(array1);
+//		ip.setProcessor("processor", ipc);
+//		System.out.println();
+//		System.out.println();
+//		System.out.println("----------------------------");
+//		System.out.println("|Alpha| > T ---- Delta = 1");
+//		System.out.println("----------------------------");
+//		System.out.println("Bytes anteriores a beta1");
+//		Utils.printArray(array1, 0, 0, m, n);
+//		delta = 1;
+//		int alpha = emc.getAlpha(matrixM, array1, 0, 0, 1);
+//		int t = Math.abs(alpha) - 1;
+//		int g = 5;
+//		beta1 = evc.getBeta1(g, t, m, n);
+//		System.out.println("-------------------");
+//		System.out.println("Alpha = "+alpha);
+//		System.out.println("T = "+t);
+//		System.out.println("G = "+g);
+//		System.out.println("Beta1 = "+beta1);
+//		System.out.println("-------------------");
+//		int value = emc.channelValue(array1[0][0], 0);
+//		System.out.println(value);
+//		System.out.println(emc.shiftIntToChannel(value, 0));
+//		System.out.println(emc.shiftIntToChannel(beta1, 0));
+//		emc.setSelectedChannel(0);
+//		ImagePlus res = emc.createGap(ip, array1, alpha, beta1, t, delta, 0, 0, m, n);
+//		int[][] bytesSalida = res.getProcessor().getIntArray();
+//		System.out.println("Bytes posteriores a beta1, canal usado: "+emc.getSelectedChannel());
+//		Utils.printArray(bytesSalida, 0, 0, m, n);
+//	}
+//	
+//	/*
+//	 * |Alpha| = T, debe dejar la matriz igual
+//	 * 
+//	 * Delta = 1
+//	 * 
+//	 * La imagen es a color y lo meteremos en el canal B
+//	 */
+//	@Test
+//	public void test4d(){
+//		//para alpha > T en valor absoluto
+//		array1 = Utils.createRandomIntArray(10, 20);
+//		ip = new ImagePlus();
+//		ImageProcessor ipc = new ColorProcessor(10, 20);
+//		ipc.setIntArray(array1);
+//		ip.setProcessor("processor", ipc);
+//		System.out.println();
+//		System.out.println();
+//		System.out.println("----------------------------");
+//		System.out.println("|Alpha| = T ---- Delta = 1");
+//		System.out.println("----------------------------");
+//		System.out.println("Bytes anteriores a beta1");
+//		Utils.printArray(array1, 0, 0, m, n);
+//		delta = 1;
+//		int alpha = emc.getAlpha(matrixM, array1, 0, 0, 1);
+//		int t = Math.abs(alpha);
+//		int g = 5;
+//		beta1 = evc.getBeta1(g, t, m, n);
+//		System.out.println("-------------------");
+//		System.out.println("Alpha = "+alpha);
+//		System.out.println("T = "+t);
+//		System.out.println("G = "+g);
+//		System.out.println("Beta1 = "+beta1);
+//		System.out.println("-------------------");
+//		emc.setSelectedChannel(2);
+//		ImagePlus res = emc.createGap(ip, array1, alpha, beta1, t, delta, 0, 0, m, n);
+//		int[][] bytesSalida = res.getProcessor().getIntArray();
+//		System.out.println("Bytes posteriores a beta1, canal usado: "+emc.getSelectedChannel());
+//		Utils.printArray(bytesSalida, 0, 0, m, n);
+//	}
 }
