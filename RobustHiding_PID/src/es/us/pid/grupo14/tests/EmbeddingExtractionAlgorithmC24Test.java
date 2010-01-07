@@ -49,10 +49,11 @@ public class EmbeddingExtractionAlgorithmC24Test {
 
 	@Before
 	public void setUp(){
-		img = new ImagePlus("tests-files/kanoute-perfil.bmp");
+		img = new ImagePlus("tests-files/titomc-foca.bmp");
 		emb = new EmbeddingAlgorithmC24Impl();
 		val = new EmbeddedValidationC24Impl();
 		ext = new ExtractionAlgorithmC24Impl();
+		emb.setSelectedChannel(0);
 		byte[] dataAux = {1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,-127,-127,
 				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
 				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
@@ -60,6 +61,18 @@ public class EmbeddingExtractionAlgorithmC24Test {
 				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
 				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
 				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
+				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
+				-127,-127,-127,-127,-127,-127,-127,-127,-127,-3,-14,-10,
+				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
+				-127,-127,-127,-127,-127,-127,-127,-127,-127,-3,-14,-10,
+				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
+				-127,-127,-127,-127,-127,-127,-127,-127,-127,-3,-14,-10,
+				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
+				-127,-127,-127,-127,-127,-127,-127,-127,-127,-3,-14,-10,
+				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
+				-127,-127,-127,-127,-127,-127,-127,-127,-127,-3,-14,-10,
+				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
+				-127,-127,-127,-127,-127,-127,-127,-127,-127,-3,-14,-10,
 				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
 				-127,-127,-127,-127,-127,-127,-127,-127,-127,-3,-14,-10};
 		data = dataAux;
@@ -78,6 +91,8 @@ public class EmbeddingExtractionAlgorithmC24Test {
 		System.out.println("Beta 2 = "+beta2);
 		int histogramType = val.getHistogramType(img, beta1, beta2);
 		delta = val.getDelta(histogramType);
+		img = val.reescaleHistogram(img, histogramType, beta1, beta2, false);
+		System.out.println("Tipo de histograma: "+histogramType);
 		System.out.println(delta);
 		
 //		byte[] dataAux = {-3,-14,-10, 1,2,3,4}; //mas de 7 bytes se corrompe parece
@@ -111,7 +126,7 @@ public class EmbeddingExtractionAlgorithmC24Test {
 			}
 		}
 		try {
-			ImageIO.write(im, "bmp", new File("tests-files/stego-kanoute.bmp"));
+			ImageIO.write(im, "bmp", new File("tests-files/stego-titomc.bmp"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -128,7 +143,7 @@ public class EmbeddingExtractionAlgorithmC24Test {
 		n = 8;
 		t = 128;
 		g = 64;
-		stegoImg = new ImagePlus("tests-files/stego-kanoute.bmp");
+		stegoImg = new ImagePlus("tests-files/stego-titomc.bmp");
 		beta1 = ext.getBeta1(g, t, m, n);
 		beta2 = ext.getBeta2(g, t, m, n);
 		System.out.println("Beta 1 = "+beta1);
@@ -140,7 +155,7 @@ public class EmbeddingExtractionAlgorithmC24Test {
 		imgRest.show();
 		BufferedImage im = imgRest.getBufferedImage();
 		try {
-			ImageIO.write(im, "bmp", new File("tests-files/restored-kanoute.bmp"));
+			ImageIO.write(im, "bmp", new File("tests-files/restored-titomc.bmp"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -14,10 +14,13 @@ public class EmbeddedValidationC24Impl implements EmbeddedValidation {
 	
 	private int selectedChannel;
 	
+	private int channelMax;
+	
 	public EmbeddedValidationC24Impl() {
 		super();
 		//por defecto el canal Azul ya que es menos sensible al ojo
 		selectedChannel = 2;
+		channelMax = 0;
 	}
 
 	public int getSelectedChannel() {
@@ -65,39 +68,39 @@ public class EmbeddedValidationC24Impl implements EmbeddedValidation {
 		int res;
 		int[] pixel = new int[3];
 		ImageProcessor ip = img.getProcessor();
-		int[] histogram = ip.getHistogram();
+//		int[] histogram = ip.getHistogram();
 		int min = Integer.MAX_VALUE , max = Integer.MIN_VALUE,aux;
-		
-		for (int i = 0; i < histogram.length; i++) {
-			aux = channelValue(histogram[i],selectedChannel);
-			if (aux < min) {
-				min = aux;
-			}
-			if (aux > max) {
-				max = aux;
-			}
-		}
-		
-//		for (int i = 0; i < img.getHeight(); i++) {
-//			for (int j = 0; j < img.getWidth(); j++) {
-//				pixel = ip.getPixel(i, j, pixel);
-//				aux = pixel[selectedChannel];
-//				
-//				if (aux < min) {
-//					min = aux;
-//				}
-//				if (aux > max) {
-//					max = aux;
-//				}
+//		
+//		for (int i = 0; i < histogram.length; i++) {
+//			aux = channelValue(histogram[i],selectedChannel);
+//			if (aux < min) {
+//				min = aux;
+//			}
+//			if (aux > max) {
+//				max = aux;
 //			}
 //		}
+		
+		for (int i = 0; i < img.getHeight(); i++) {
+			for (int j = 0; j < img.getWidth(); j++) {
+				pixel = ip.getPixel(j, i, pixel);
+				aux = pixel[selectedChannel];
+				
+				if (aux < min) {
+					min = aux;
+				}
+				if (aux > max) {
+					max = aux;
+				}
+			}
+		}
 		
 		int bitDepth = img.getBitDepth()/3;
 		int maxLevel = (int)Math.pow(2, bitDepth) - 1;
 		int gap1 = min, gap2 = maxLevel - max;
-		if (beta1 >= gap1){
+		if (beta1 <= gap1){
 			//tipos A y C
-			if (beta1 >= gap2){
+			if (beta1 <= gap2){
 				//tipo A
 				res = EmbeddedValidation.HISTOGRAM_TYPE_A;
 			}
@@ -108,7 +111,7 @@ public class EmbeddedValidationC24Impl implements EmbeddedValidation {
 		}
 		else{
 			//tipos B y D
-			if (beta1 >= gap2){
+			if (beta1 <= gap2){
 				//tipo B
 				res = EmbeddedValidation.HISTOGRAM_TYPE_B;
 			}
@@ -117,6 +120,7 @@ public class EmbeddedValidationC24Impl implements EmbeddedValidation {
 				res = EmbeddedValidation.HISTOGRAM_TYPE_D;
 			}
 		}
+		channelMax = max;
 		return res;
 	}
 
@@ -187,11 +191,12 @@ public class EmbeddedValidationC24Impl implements EmbeddedValidation {
 	public ImagePlus reescaleHistogram(ImagePlus img, int type, int beta1,
 			int beta2, boolean tGreaterAlphaMax) {
 		// TODO no está probada
+
 		ImagePlus res = null;
-		if (type == EmbeddedValidation.HISTOGRAM_TYPE_D){
-//			ImageStatistics is = img.getStatistics();
-			int bitDepth = img.getBitDepth();
-			int maxLevel = (int)Math.pow(2, bitDepth) - 1;
+		if (type == EmbeddedValidation.HISTOGRAM_TYPE_D) {
+			// ImageStatistics is = img.getStatistics();
+			int bitDepth = 8;
+			int maxLevel = (int) Math.pow(2, bitDepth) - 1;
 			int newMax;
 			if (tGreaterAlphaMax){
 				//en este caso, nunca se sumara beta1
@@ -201,16 +206,26 @@ public class EmbeddedValidationC24Impl implements EmbeddedValidation {
 				newMax = maxLevel - beta1;
 			}
 			ImageProcessor ip = img.getProcessor();
-			//imagenes en escala de grises de 8 bits
-			byte[] pixels = (byte[])ip.getPixels();
-			for (int i = 0; i < pixels.length; i++){
-				//truncamos al mayor valor posible
-				if (pixels[i] > newMax){
-					pixels[i] = (byte)newMax;
+			int w = img.getWidth(), h = img.getHeight();
+			for (int i = 0; i < h; i++){
+				for (int j = 0; j < w; j++){
+					int[] rgb = ip.getPixel(j, i, null);
+					if (rgb[selectedChannel] > newMax){
+						rgb[selectedChannel] = newMax;			
+						ip.putPixel(j, i, rgb);
+					}
 				}
 			}
+//			for (int i = 0; i < pixels.length; i++) {
+//				// truncamos al mayor valor posible
+//				if (pixels[i] > newMax) {
+//					pixels[i] = newMaxByte;
+//				}
+//			}
 		}
 		res = img;
+//		ImageStatistics is = img.getStatistics();
+//		int min = (int) is.min, max = (int) is.max;
 		return res;
 	}
 	

@@ -61,7 +61,7 @@ public class EmbeddingAlgorithmC24Impl implements EmbeddingAlgorithm {
 				// voy guardando la frecuencia acumulada
 				alphasBefore.put(alpha, alphasBefore.get(alpha) + 1);
 
-				res = createGap(res, img.getProcessor(), beta1, alpha, t, delta, i, j, m, n);
+				res = createGap(res, img.getProcessor(), alpha, beta1, t, delta, i, j, m, n);
 
 				// si el alpha esta en rango y quedan aun datos por insertar
 				if (isInRange(alpha, t) && (bitCount < dataSize)) {
@@ -114,26 +114,26 @@ public class EmbeddingAlgorithmC24Impl implements EmbeddingAlgorithm {
 				for (int a = i; a < aLimit; a++) {
 					for (int b = j; b < bLimit; b++) {
 						if ((a % 2) == (b % 2)) {
-							value = originalImage.getPixel(a, b, value);
+							value = originalImage.getPixel(b, a, value);
 							value[selectedChannel] += delta * beta2;
 							pixel = value;
 						} else {
-							pixel = originalImage.getPixel(a, b, value);
+							pixel = originalImage.getPixel(b, a, value);
 						}
-						ip.putPixel(a, b, pixel);
+						ip.putPixel(b, a, pixel);
 					}
 				}
 			} else {
 				for (int a = i; a < aLimit; a++) {
 					for (int b = j; b < bLimit; b++) {
 						if ((a % 2) != (b % 2)) {
-							value = originalImage.getPixel(a, b, value);
+							value = originalImage.getPixel(b, a, value);
 							value[selectedChannel] += delta * beta2;
 							pixel = value;
 						} else {
-							pixel = originalImage.getPixel(a, b, value);
+							pixel = originalImage.getPixel(b, a, value);
 						}
-						ip.putPixel(a, b, pixel);
+						ip.putPixel(b, a, pixel);
 					}
 				}
 			}
@@ -141,7 +141,7 @@ public class EmbeddingAlgorithmC24Impl implements EmbeddingAlgorithm {
 		} else {
 			for (int a = i; a < aLimit; a++) {
 				for (int b = j; b < bLimit; b++) {
-					ip.putPixel(a, b, originalImage.getPixel(a, b, value));
+					ip.putPixel(b, a, originalImage.getPixel(b, a, value));
 				}
 			}
 		}
@@ -161,32 +161,32 @@ public class EmbeddingAlgorithmC24Impl implements EmbeddingAlgorithm {
 			for (int a = i; a < aLimit; a++) {
 				for (int b = j; b < bLimit; b++) {
 					if ((a % 2) == (b % 2)) {
-						value = originalImage.getPixel(a, b, value);
+						value = originalImage.getPixel(b, a, value);
 						value[selectedChannel] += delta * beta1;
 						pixel = value;
 					} else {
-						pixel = originalImage.getPixel(a, b, value);
+						pixel = originalImage.getPixel(b, a, value);
 					}
-					ip.putPixel(a, b, value);
+					ip.putPixel(b, a, value);
 				}
 			}
 		} else if (alpha < -t) {
 			for (int a = i; a < aLimit; a++) {
 				for (int b = j; b < bLimit; b++) {
 					if ((a % 2) != (b % 2)) {
-						value = originalImage.getPixel(a, b, value);
+						value = originalImage.getPixel(b, a, value);
 						value[selectedChannel] += delta * beta1;
 						pixel = value;
 					} else {
-						pixel = originalImage.getPixel(a, b, value);
+						pixel = originalImage.getPixel(b, a, value);
 					}
-					ip.putPixel(a, b, value);
+					ip.putPixel(b, a, value);
 				}
 			}
 		} else {
 			for (int a = i; a < aLimit; a++) {
 				for (int b = j; b < bLimit; b++) {
-					ip.putPixel(a, b, originalImage.getPixel(a, b, value));
+					ip.putPixel(b, a, originalImage.getPixel(b, a, value));
 				}
 			}
 		}
@@ -202,7 +202,7 @@ public class EmbeddingAlgorithmC24Impl implements EmbeddingAlgorithm {
 		for (int a = i; a < aLimit; a++) {
 			d = 0;
 			for (int b = j; b < bLimit; b++) {
-				value = image.getPixel(a, b, value);
+				value = image.getPixel(b, a, value);
 				alpha = alpha + (delta * matrixM[c][d] * value[selectedChannel]);
 				d++;
 			}

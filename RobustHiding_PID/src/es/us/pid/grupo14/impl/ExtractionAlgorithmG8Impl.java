@@ -158,10 +158,10 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 		//FIXME dejar los true y false bien al final
 		String imgName = stegoImg.getTitle();
 		if (imgName.endsWith(".jpg") || imgName.endsWith(".jpeg")){
-			return true;
+			return false;
 		}
 		else{
-			return true;
+			return false;
 		}
 	}
 

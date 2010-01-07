@@ -43,6 +43,11 @@ public class EmbeddedValidationG8Impl implements EmbeddedValidation {
 		return res;
 	}
 
+	/*
+	 * Depende del tipo de imagen, este debe quedarse aqui
+	 * (non-Javadoc)
+	 * @see es.us.pid.grupo14.EmbeddedValidation#getHistogramType(ij.ImagePlus, int, int)
+	 */
 	@Override
 	public int getHistogramType(ImagePlus img, int beta1, int beta2) {
 		// segun la formula, beta1 siempre sera mayor que beta2
@@ -109,6 +114,12 @@ public class EmbeddedValidationG8Impl implements EmbeddedValidation {
 		return false;
 	} 
 	
+	
+	/*
+	 * Depende del tipo de imagen, este debe quedarse aqui
+	 * (non-Javadoc)
+	 * @see es.us.pid.grupo14.EmbeddedValidation#reescaleHistogram(ij.ImagePlus, int, int, int, boolean)
+	 */
 	//@Override
 	public ImagePlus reescaleHistogram(ImagePlus img, int type, int beta1,
 			int beta2, boolean tGreaterAlphaMax) {
@@ -148,7 +159,7 @@ public class EmbeddedValidationG8Impl implements EmbeddedValidation {
 		}
 		res = img;
 		ImageStatistics is = img.getStatistics();
-		int min = (int) is.min, max = (int) is.max;
+//		int min = (int) is.min, max = (int) is.max;
 		return res;
 	}
 	

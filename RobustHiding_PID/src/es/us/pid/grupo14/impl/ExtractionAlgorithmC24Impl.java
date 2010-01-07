@@ -86,73 +86,6 @@ public class ExtractionAlgorithmC24Impl implements ExtractionAlgorithm {
 		return result;
 	}
 
-	private int[] getNewTandG(ImagePlus stegoImg, int n0, int n1, int m, int n, int delta, int[][] matrixM) {
-		//en la posicion 0 almacenamos T, y en la 1 G
-		SortedMap<Integer,Integer> dist = new TreeMap<Integer,Integer>();
-		int[] res = new int[2];
-		int w = stegoImg.getWidth(), h = stegoImg.getHeight();
-		//int cont0 = 0, cont1 = 0;
-		
-		//obtenemos la distribucion de los alphas
-		for (int i = 0; i < h; i = i + m) {
-			for (int j = 0; j < w; j = j + n) {
-				int alpha = getAlpha(matrixM, stegoImg.getProcessor(), i, j, delta);
-				int value;
-				if (dist.containsKey(alpha)){
-					value = dist.get(alpha) + 1;
-				}
-				else{
-					value = 1;
-				}
-				dist.put(alpha, value);
-			}
-		}
-		
-		int alphaCont = 1;
-		//0 no tiene elemento opuesto
-		int cont0 = dist.get(0);
-		
-		/*
-		 * Ahora que tenemos la distribucion de alphas, y el numero de ceros y unos,
-		 * empezamos a contar desde alpha = 0 para encontrar el intervalo [-T,T] en el que
-		 * tiene que haber n0 ceros (n0 alphas)
-		 * 
-		 * Una vez determinado dicho intervalo, hacemos lo mismo desde -T y T para contar n1
-		 * alphas y obtener G
-		 */
-		while (cont0 < n0){
-			int valPos = dist.get(alphaCont);
-			int valNeg = dist.get(-alphaCont);
-			cont0 = cont0 + valPos + valNeg;
-			alphaCont++;
-		}
-		
-		res[0] = alphaCont - 1;
-		
-		int cont1 = 0;
-		while (cont1 < n1){
-			int valPos = dist.get(alphaCont);
-			int valNeg = dist.get(-alphaCont);
-			cont1 = cont1 + valPos + valNeg;
-			alphaCont++;
-		}
-		
-		int adj1 = alphaCont - 1;
-		res[1] = adj1 - 2*res[0];
-		
-		return res;
-	}
-
-	private boolean isJpgImage(ImagePlus stegoImg) {
-		FileInfo fi = stegoImg.getFileInfo();
-		if (fi.fileFormat == FileInfo.JPEG){
-			return true;
-		}
-		else{
-			return false;
-		}	
-	}
-
 	private boolean isInOneZone(int t, int g, int alpha) {
 		return (alpha > t) && (alpha <= (2*t)+g) || 
 				(alpha >= -((2*t)+g)) && (alpha < -t);
@@ -187,7 +120,7 @@ public class ExtractionAlgorithmC24Impl implements ExtractionAlgorithm {
 		for (int a = i; a < aLimit; a++) {
 			d = 0;
 			for (int b = j; b < bLimit; b++) {
-				value = image.getPixel(a, b, value);
+				value = image.getPixel(b, a, value);
 				alpha = alpha + (delta * matrixM[c][d] * value[selectedChannel]);
 				d++;
 			}
@@ -207,11 +140,11 @@ public class ExtractionAlgorithmC24Impl implements ExtractionAlgorithm {
 			for (int a = i; a < aLimit; a++) {
 				for (int b = j; b < bLimit; b++) {
 					if ((a % 2) == (b % 2)) {
-						value = originalImage.getPixel(a, b, value);
+						value = originalImage.getPixel(b, a, value);
 						value[selectedChannel] -= beta1;
 						pixel = value;
 					} else {
-						pixel = originalImage.getPixel(a, b, value);
+						pixel = originalImage.getPixel(b, a, value);
 					}
 					ip.putPixel(b, a, pixel);
 				}
@@ -220,11 +153,11 @@ public class ExtractionAlgorithmC24Impl implements ExtractionAlgorithm {
 			for (int a = i; a < aLimit; a++) {
 				for (int b = j; b < bLimit; b++) {
 					if ((a % 2) != (b % 2)) {
-						value = originalImage.getPixel(a, b, value);
+						value = originalImage.getPixel(b, a, value);
 						value[selectedChannel] -= beta1;
 						pixel = value;
 					} else {
-						pixel = originalImage.getPixel(a, b, value);
+						pixel = originalImage.getPixel(b, a, value);
 					}
 					ip.putPixel(b, a, pixel);
 				}
@@ -232,7 +165,7 @@ public class ExtractionAlgorithmC24Impl implements ExtractionAlgorithm {
 		} else {
 			for (int a = i; a < aLimit; a++) {
 				for (int b = j; b < bLimit; b++) {
-					ip.putPixel(a, b, originalImage.getPixel(a, b, value));
+					ip.putPixel(b, a, originalImage.getPixel(b, a, value));
 				}
 			}
 		}
@@ -250,11 +183,11 @@ public class ExtractionAlgorithmC24Impl implements ExtractionAlgorithm {
 			for (int a = i; a < aLimit; a++) {
 				for (int b = j; b < bLimit; b++) {
 					if ((a % 2) == (b % 2)) {
-						value = originalImage.getPixel(a, b, value);
+						value = originalImage.getPixel(b, a, value);
 						value[selectedChannel] -= beta2;
 						pixel = value;
 					} else {
-						pixel =  originalImage.getPixel(a, b, value);
+						pixel =  originalImage.getPixel(b, a, value);
 					}
 					ip.putPixel(b, a, pixel);
 				}
@@ -263,11 +196,11 @@ public class ExtractionAlgorithmC24Impl implements ExtractionAlgorithm {
 			for (int a = i; a < aLimit; a++) {
 				for (int b = j; b < bLimit; b++) {
 					if ((a % 2) != (b % 2)) {
-						value = originalImage.getPixel(a, b, value);
+						value = originalImage.getPixel(b, a, value);
 						value[selectedChannel] -= beta2;
 						pixel = value;
 					} else {
-						pixel = originalImage.getPixel(a, b, value);
+						pixel = originalImage.getPixel(b, a, value);
 					}
 					ip.putPixel(b, a, pixel);
 				}
@@ -275,7 +208,7 @@ public class ExtractionAlgorithmC24Impl implements ExtractionAlgorithm {
 		} else {
 			for (int a = i; a < aLimit; a++) {
 				for (int b = j; b < bLimit; b++) {
-					ip.putPixel(a, b, originalImage.getPixel(a, b, value));
+					ip.putPixel(b, a, originalImage.getPixel(b, a, value));
 				}
 			}
 		}
