@@ -1,6 +1,0 @@
-The name "JPEG" stands for Joint Photographic Experts Group, 
-the name of the committee that created the JPEG standard and 
-also other standards. The group was organized in 1986,[1] 
-issuing the first JPEG standard in 1992, which was approved 
-in September 1992 as ITU-T Recommendation T.81[2] and in 1994 as 
-ISO/IEC 10918-1.
