@@ -3,6 +3,7 @@ package es.us.pid.grupo14.impl;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
+import es.us.pid.grupo14.AlphasImage;
 import es.us.pid.grupo14.EmbeddedValidation;
 import ij.io.OpenDialog;
 
@@ -51,9 +52,9 @@ public class EmbeddedValidationG8Impl implements EmbeddedValidation {
 		int bitDepth = img.getBitDepth();
 		int maxLevel = (int) Math.pow(2, bitDepth) - 1;
 		int gap1 = min, gap2 = maxLevel - max;
-		if (beta1 >= gap1) {
+		if (beta1 <= gap1) {
 			// tipos A y C
-			if (beta1 >= gap2) {
+			if (beta1 <= gap2) {
 				// tipo A
 				res = EmbeddedValidation.HISTOGRAM_TYPE_A;
 			} else {
@@ -62,7 +63,7 @@ public class EmbeddedValidationG8Impl implements EmbeddedValidation {
 			}
 		} else {
 			// tipos B y D
-			if (beta1 >= gap2) {
+			if (beta1 <= gap2) {
 				// tipo B
 				res = EmbeddedValidation.HISTOGRAM_TYPE_B;
 			} else {
@@ -106,32 +107,52 @@ public class EmbeddedValidationG8Impl implements EmbeddedValidation {
 		// si T < alphaMax, no es posible calcular la capacidad sin calcular los
 		// alphas
 		return false;
-	}
-
-	@Override
+	} 
+	
+	//@Override
 	public ImagePlus reescaleHistogram(ImagePlus img, int type, int beta1,
-			int beta2) {
-		// TODO es importante probar esta funcion
+			int beta2, boolean tGreaterAlphaMax) {
 		ImagePlus res = null;
 		if (type == EmbeddedValidation.HISTOGRAM_TYPE_D) {
 			// ImageStatistics is = img.getStatistics();
 			int bitDepth = img.getBitDepth();
 			int maxLevel = (int) Math.pow(2, bitDepth) - 1;
-			int newMax = maxLevel - beta1;
+			int newMax;
+			if (tGreaterAlphaMax){
+				//en este caso, nunca se sumara beta1
+				newMax = maxLevel - beta2;
+			}
+			else{
+				newMax = maxLevel - beta1;
+			}
+			//es correcto el casting, los numeros utilizan complemento a 2
+//			byte newMaxByte = (byte)newMax;
 			ImageProcessor ip = img.getProcessor();
 			// imagenes en escala de grises de 8 bits
-			byte[] pixels = (byte[]) ip.getPixels();
-			for (int i = 0; i < pixels.length; i++) {
-				// truncamos al mayor valor posible
-				if (pixels[i] > newMax) {
-					pixels[i] = (byte) newMax;
+//			byte[] pixels = (byte[]) ip.getPixels();
+			int w = img.getWidth(), h = img.getHeight();
+			int[][] pixels = ip.getIntArray();
+			for (int i = 0; i < h; i++){
+				for (int j = 0; j < w; j++){
+					if (pixels[j][i] > newMax){
+						ip.putPixel(j, i, newMax);
+					}
 				}
 			}
+//			for (int i = 0; i < pixels.length; i++) {
+//				// truncamos al mayor valor posible
+//				if (pixels[i] > newMax) {
+//					pixels[i] = newMaxByte;
+//				}
+//			}
 		}
 		res = img;
+		ImageStatistics is = img.getStatistics();
+		int min = (int) is.min, max = (int) is.max;
 		return res;
 	}
-
+	
+	
 	@Override
 	public byte[] readFile() throws IOException {
 		// Esta funcion necesita lanzar la excepcion IOException por si no se
@@ -198,7 +219,8 @@ public class EmbeddedValidationG8Impl implements EmbeddedValidation {
 //		byte b = (byte) 0xf3;
 //		int aux = obj.getBitsToOne(b);
 //		System.out.println(aux);
-		
+		byte b = (byte) 0xff;
+		System.out.println(b);
 	}
 	
 
@@ -230,4 +252,53 @@ public class EmbeddedValidationG8Impl implements EmbeddedValidation {
 		
 	}
 
+	
+	public AlphasImage getAlphasImage(ImagePlus img, int m, int n, int delta){
+		
+		int[][] pixels = img.getProcessor().getIntArray();
+		int w = img.getWidth(), h = img.getHeight();
+		int[][] matrixM = getMatrixM(m, n);
+		
+		
+		int fi = 0, col = 0;
+		int d1 = h/m, d2 = w/n;
+		int[][] alphas = new int[d1][d2];
+		int alphaMax = 0;
+		
+		for (int i = 0; i <= (h - m); i = i + m) {
+			for (int j = 0; j <= (w - n); j = j + n) {
+				int alpha = getAlpha(matrixM, pixels, i, j, delta);
+				alphas[fi][col] = alpha;
+				if (Math.abs(alpha) > alphaMax){
+					alphaMax = alpha;
+				}
+				col++;
+			}
+			col = 0;
+			fi++;
+		}
+		AlphasImage res = new AlphasImage();
+		res.setAlphaMax(alphaMax);
+		res.setAlphas(alphas);
+		return res;
+	}
+	
+	public int getAlpha(int[][] matrixM, int[][] pixels, int i, int j, int delta) {
+		// funcion validada
+		int alpha = 0;
+		int aLimit = i + matrixM.length, bLimit = j + matrixM[0].length;
+		int c = 0, d = 0;
+		for (int a = i; a < aLimit; a++) {
+			d = 0;
+			for (int b = j; b < bLimit; b++) {
+				alpha = alpha + (delta * matrixM[c][d] * pixels[b][a]);
+				d++;
+			}
+			c++;
+		}
+		return alpha;
+	}
+	
+	
+	
 }

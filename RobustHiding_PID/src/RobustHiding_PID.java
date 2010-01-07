@@ -4,6 +4,7 @@ import ij.ImagePlus;
 import ij.gui.GenericDialog;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
+import es.us.pid.grupo14.AlphasImage;
 import es.us.pid.grupo14.ExtractionAlgorithm;
 import es.us.pid.grupo14.HidingResult;
 import es.us.pid.grupo14.impl.EmbeddingAlgorithmG8Impl;
@@ -176,7 +177,9 @@ public class RobustHiding_PID implements PlugInFilter {
 		int beta2 = val.getBeta2((int) g, (int) t, (int) m, (int) n);
 		
 		int histogramType = val.getHistogramType(this.imp, beta1, beta2);
-		this.imp = val.reescaleHistogram(imp, histogramType, beta1, beta2);
+		AlphasImage aimg = val.getAlphasImage(imp, (int)m, (int)n, (int)delta);
+		boolean tGreaterAlphaMax = (t > aimg.getAlphaMax());
+		this.imp = val.reescaleHistogram(imp, histogramType, beta1, beta2, tGreaterAlphaMax);
 		int delta = val.getDelta(histogramType);
 		
 		IJ.showMessage("Ya tenemos calculado todos los par‡metros necesarios para realizar la inyecci—n. \n" +

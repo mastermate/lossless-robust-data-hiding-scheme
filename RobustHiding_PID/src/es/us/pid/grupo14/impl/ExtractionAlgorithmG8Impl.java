@@ -31,7 +31,7 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 			g = g1;
 		}
 		int w = stegoImg.getWidth(), h = stegoImg.getHeight();
-		int beta1 = delta * getBeta1(g, t, m, n);
+		int beta1 = delta * getBeta1(g,t,m,n);
 		int beta2 = delta * getBeta2(g,t,m,n);
 		ImageProcessor ip = new ByteProcessor(w, h);
 		ImagePlus recoveredImg = new ImagePlus("recovered-image",ip);
@@ -44,8 +44,8 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 		int[][] pixels = stegoImg.getProcessor().getIntArray();
 		
 		//mientras queden bloques
-		for (int i = 0; i < (h - m); i = i + m) {
-			for (int j = 0; j < (w - n); j = j + n) {
+		for (int i = 0; i <= (h - m); i = i + m) {
+			for (int j = 0; j <= (w - n); j = j + n) {
 				int alpha = getAlpha(matrixM, pixels, i, j, delta);
 				//Nota ¿es necesario reasignar?
 				recoveredImg = restoreGapBeta1(recoveredImg, pixels, beta1, alpha, t, delta, i, j, m, n);
@@ -79,7 +79,7 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 		result.setData(data.toByteArray());
 		return result;
 	} 
-	
+
 	private int[] getNewTandG(ImagePlus stegoImg, int n0, int n1, int m, int n, int delta, int[][] matrixM) {
 		//en la posicion 0 almacenamos T, y en la 1 G
 		SortedMap<Integer,Integer> dist = new TreeMap<Integer,Integer>();
@@ -92,8 +92,10 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 		
 		//obtenemos la distribucion solo de los alphas que se han usado
 		//para embeber bits
-		for (int i = 0; (i < h) && (contBlocks <= dataBitsSize); i = i + m) {
-			for (int j = 0; (j < w) && (contBlocks <= dataBitsSize); j = j + n) {
+		
+		//aqui estoy considerando que todos los bloques se utilizan para embeber. error :/
+		for (int i = 0; (i <= (h - m)) && (contBlocks <= dataBitsSize); i = i + m) {
+			for (int j = 0; (j <= (w - n)) && (contBlocks <= dataBitsSize); j = j + n) {
 				int alpha = getAlpha(matrixM, pixels, i, j, delta);
 				int value;
 				if (dist.containsKey(alpha)){
@@ -153,26 +155,14 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 	}
 
 	private boolean isJpgImage(ImagePlus stegoImg) {
-		//FIXME hacer que este metodo rule!!!!
+		//FIXME dejar los true y false bien al final
 		String imgName = stegoImg.getTitle();
 		if (imgName.endsWith(".jpg") || imgName.endsWith(".jpeg")){
 			return true;
 		}
 		else{
-			return false;
+			return true;
 		}
-//		FileInfo fi = stegoImg.getFileInfo();
-//		System.out.println("FileInfo Compression = "+fi.compression);
-//		System.out.println("FileInfo format = "+fi.fileFormat);
-//		System.out.println("FileInfo type = "+fi.fileType);
-//		System.out.println("FileInfo info = "+fi.info);
-//		System.out.println("FileInfo JPG = "+FileInfo.JPEG);
-//		if (fi.fileType == FileInfo.JPEG){
-//			return true;
-//		}
-//		else{
-//			return true;
-//		}	
 	}
 
 	private boolean isInOneZone(int t, int g, int alpha) {

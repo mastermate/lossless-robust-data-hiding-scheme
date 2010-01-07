@@ -169,14 +169,21 @@ public class EmbeddedValidationC24Impl implements EmbeddedValidation {
 
 	@Override
 	public ImagePlus reescaleHistogram(ImagePlus img, int type, int beta1,
-			int beta2) {
+			int beta2, boolean tGreaterAlphaMax) {
 		// TODO no está probada
 		ImagePlus res = null;
 		if (type == EmbeddedValidation.HISTOGRAM_TYPE_D){
 //			ImageStatistics is = img.getStatistics();
 			int bitDepth = img.getBitDepth();
 			int maxLevel = (int)Math.pow(2, bitDepth) - 1;
-			int newMax = maxLevel - beta1;
+			int newMax;
+			if (tGreaterAlphaMax){
+				//en este caso, nunca se sumara beta1
+				newMax = maxLevel - beta2;
+			}
+			else{
+				newMax = maxLevel - beta1;
+			}
 			ImageProcessor ip = img.getProcessor();
 			//imagenes en escala de grises de 8 bits
 			byte[] pixels = (byte[])ip.getPixels();
@@ -214,5 +221,18 @@ public class EmbeddedValidationC24Impl implements EmbeddedValidation {
 			break;
 		}
 		return res;
+	}
+
+	@Override
+	public double getBitErrorRate(byte[] originalData, byte[] recoveredData,
+			int size) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double getPSNR(ImagePlus original, ImagePlus stego) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

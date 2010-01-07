@@ -40,6 +40,8 @@ public class EmbeddingAlgorithmC24Impl implements EmbeddingAlgorithm {
 	@Override
 	public ImagePlus embedBits(ImagePlus img, byte[] bits, int g, int m, int n,
 			int t, int beta1, int beta2, int delta) {
+		
+		//FIXME calcular los alphas fuera
 		int w = img.getWidth(), h = img.getHeight();
 		ImageProcessor ip = new ColorProcessor(w, h);
 		ImagePlus res = new ImagePlus("stego-image", ip);
@@ -358,5 +360,17 @@ public class EmbeddingAlgorithmC24Impl implements EmbeddingAlgorithm {
 			break;
 		}
 		return res;
+	}
+
+	@Override
+	public int getN0() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getN1() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

@@ -82,9 +82,10 @@ public interface EmbeddedValidation {
 	 * @param type int el tipo de histograma de la imagen
 	 * @param beta1 int parametro beta1
 	 * @param beta2 int parametro beta2
+	 * @param tGreaterAlphaMax boolean que indica si T es mayor que alphaMax
 	 * @return ImagePlus la imagen reescalada
 	 */
-	public ImagePlus reescaleHistogram(ImagePlus img, int type, int beta1, int beta2);
+	public ImagePlus reescaleHistogram(ImagePlus img, int type, int beta1, int beta2, boolean tGreaterAlphaMax);
 	
 	
 	/**

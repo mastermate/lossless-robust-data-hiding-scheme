@@ -48,12 +48,11 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 		
 		
 		int[][] pixels = img.getProcessor().getIntArray();
-//		int hPixels = pixels.length;
-//		int wPixels = pixels[0].length;
+
 
 		// mientras queden bloques
-		for (int i = 0; i < (h - m); i = i + m) {
-			for (int j = 0; j < (w - n); j = j + n) {
+		for (int i = 0; i <= (h - m); i = i + m) {
+			for (int j = 0; j <= (w - n); j = j + n) {
 				int alpha = getAlpha(matrixM, pixels, i, j, delta);
 
 				if (!alphasBefore.containsKey(alpha)) {
@@ -65,7 +64,7 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 				}
 				
 
-				res = createGap(res, pixels, beta1, alpha, t, delta, i, j, m, n);
+				res = createGap(res, pixels, alpha, beta1, t, delta, i, j, m, n);
 
 				// si el alpha esta en rango y quedan aun datos por insertar
 				if (isInRange(alpha, t) && (bitCont < dataSize)) {
@@ -84,8 +83,8 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 		 **/
 		int[][] pixelsStego = res.getProcessor().getIntArray();
 		// Mientras queden bloques (con la stego-imagen)
-		for (int i2 = 0; i2 < (h - m); i2 = i2 + m) {
-			for (int j2 = 0; j2 < (w - n); j2 = j2 + n) {
+		for (int i2 = 0; i2 <= (h - m); i2 = i2 + m) {
+			for (int j2 = 0; j2 <= (w - n); j2 = j2 + n) {
 				int alphaStego = getAlpha(matrixM, pixelsStego, i2, j2, delta);
 				// voy guardando la frecuencia acumulada
 				if (!alphasAfter.containsKey(alphaStego)) {
