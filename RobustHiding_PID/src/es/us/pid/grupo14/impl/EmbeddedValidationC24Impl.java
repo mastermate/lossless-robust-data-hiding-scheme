@@ -68,18 +68,8 @@ public class EmbeddedValidationC24Impl implements EmbeddedValidation {
 		int res;
 		int[] pixel = new int[3];
 		ImageProcessor ip = img.getProcessor();
-//		int[] histogram = ip.getHistogram();
 		int min = Integer.MAX_VALUE , max = Integer.MIN_VALUE,aux;
-//		
-//		for (int i = 0; i < histogram.length; i++) {
-//			aux = channelValue(histogram[i],selectedChannel);
-//			if (aux < min) {
-//				min = aux;
-//			}
-//			if (aux > max) {
-//				max = aux;
-//			}
-//		}
+
 		
 		for (int i = 0; i < img.getHeight(); i++) {
 			for (int j = 0; j < img.getWidth(); j++) {
@@ -216,16 +206,8 @@ public class EmbeddedValidationC24Impl implements EmbeddedValidation {
 					}
 				}
 			}
-//			for (int i = 0; i < pixels.length; i++) {
-//				// truncamos al mayor valor posible
-//				if (pixels[i] > newMax) {
-//					pixels[i] = newMaxByte;
-//				}
-//			}
 		}
 		res = img;
-//		ImageStatistics is = img.getStatistics();
-//		int min = (int) is.min, max = (int) is.max;
 		return res;
 	}
 	
@@ -266,4 +248,16 @@ public class EmbeddedValidationC24Impl implements EmbeddedValidation {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+//	@Override
+//	public int[] getAlphaMax(ImagePlus img, int beta1, int beta2, int m, int n) {
+//		int[] alphaMax = new int[3];
+//		ImageProcessor ip = img.getProcessor();
+//		for (int i = 0; i < alphaMax.length; i+= m) {
+//			for (int j = 0; j < alphaMax.length; j+= n) {
+//				
+//			}
+//		}
+//		return null;
+//	}
 }

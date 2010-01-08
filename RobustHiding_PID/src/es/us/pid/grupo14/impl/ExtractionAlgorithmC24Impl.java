@@ -54,7 +54,7 @@ public class ExtractionAlgorithmC24Impl implements ExtractionAlgorithm {
 			for (int j = 0; j <= (w - n); j = j + n) {
 				int alpha = getAlpha(matrixM, stegoImg.getProcessor(), i, j, delta);
 				//Nota ¿es necesario reasignar?
-				recoveredImg = restoreGapBeta1(recoveredImg, stegoImg.getProcessor(), beta1, alpha, t, delta, i, j, m, n);
+				recoveredImg = restoreGapBeta1(recoveredImg, stegoImg.getProcessor(), alpha, beta1, t, g, i, j, m, n);
 
 				if (isInZeroZone(t, alpha) && (bitCount < dataSize)) {
 					bitCount++;

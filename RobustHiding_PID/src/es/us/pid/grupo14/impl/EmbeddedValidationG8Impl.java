@@ -309,7 +309,10 @@ public class EmbeddedValidationG8Impl implements EmbeddedValidation {
 		}
 		return alpha;
 	}
-	
-	
-	
+
+//	@Override
+//	public int[] getAlphaMax(ImagePlus img, int beta1, int beta2, int m, int n) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 }

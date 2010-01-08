@@ -48,7 +48,7 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 			for (int j = 0; j <= (w - n); j = j + n) {
 				int alpha = getAlpha(matrixM, pixels, i, j, delta);
 				//Nota ¿es necesario reasignar?
-				recoveredImg = restoreGapBeta1(recoveredImg, pixels, beta1, alpha, t, delta, i, j, m, n);
+				recoveredImg = restoreGapBeta1(recoveredImg, pixels, alpha, beta1, t, g, i, j, m, n);
 
 				if (isInZeroZone(t, alpha) && (bitCount < dataSize)) {
 					bitCount++;

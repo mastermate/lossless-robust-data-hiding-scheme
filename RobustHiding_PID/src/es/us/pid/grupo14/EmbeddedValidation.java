@@ -139,7 +139,18 @@ public interface EmbeddedValidation {
     */
    public double getBitErrorRate(byte[] originalData, byte[] recoveredData, int size);
    
-  
+   
+//   /**
+//    * Devuelve el alfa máximo correspondiente a cada canal si la imagen es RGB o solo
+//    * uno si la imagen está en escala de grises
+//    * @param img
+//    * @param beta1
+//    * @param beta2
+//    * @param m
+//    * @param n
+//    * @return
+//    */
+//   public int[] getAlphaMax(ImagePlus img, int beta1, int beta2, int m, int n);
 }
 
 

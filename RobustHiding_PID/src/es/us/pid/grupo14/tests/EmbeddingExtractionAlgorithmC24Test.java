@@ -49,11 +49,16 @@ public class EmbeddingExtractionAlgorithmC24Test {
 
 	@Before
 	public void setUp(){
-		img = new ImagePlus("tests-files/titomc-foca.bmp");
+		//img = new ImagePlus("tests-files/rgb/kanoute-perfil.bmp");
+		img = new ImagePlus("tests-files/rgb/titomc-foca.bmp");
+		//img = new ImagePlus("tests-files/rgb/double-facepalm.bmp");
+		//img = new ImagePlus("tests-files/rgb/yoshi.bmp");
 		emb = new EmbeddingAlgorithmC24Impl();
 		val = new EmbeddedValidationC24Impl();
 		ext = new ExtractionAlgorithmC24Impl();
-		emb.setSelectedChannel(0);
+		val.setSelectedChannel(2);
+		emb.setSelectedChannel(2);
+		ext.setSelectedChannel(2);
 		byte[] dataAux = {1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,-127,-127,
 				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
 				-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,-127,
@@ -126,7 +131,10 @@ public class EmbeddingExtractionAlgorithmC24Test {
 			}
 		}
 		try {
+			//ImageIO.write(im, "bmp", new File("tests-files/stego-kanoute.bmp"));
 			ImageIO.write(im, "bmp", new File("tests-files/stego-titomc.bmp"));
+			//ImageIO.write(im, "bmp", new File("tests-files/stego-facepalm.bmp"));
+			//ImageIO.write(im, "bmp", new File("tests-files/stego-yoshi.bmp"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -143,7 +151,10 @@ public class EmbeddingExtractionAlgorithmC24Test {
 		n = 8;
 		t = 128;
 		g = 64;
+		//stegoImg = new ImagePlus("tests-files/stego-kanoute.bmp");
 		stegoImg = new ImagePlus("tests-files/stego-titomc.bmp");
+		//stegoImg = new ImagePlus("tests-files/stego-facepalm.bmp");
+		//stegoImg = new ImagePlus("tests-files/stego-yoshi.bmp");
 		beta1 = ext.getBeta1(g, t, m, n);
 		beta2 = ext.getBeta2(g, t, m, n);
 		System.out.println("Beta 1 = "+beta1);
@@ -155,7 +166,11 @@ public class EmbeddingExtractionAlgorithmC24Test {
 		imgRest.show();
 		BufferedImage im = imgRest.getBufferedImage();
 		try {
+			//ImageIO.write(im, "bmp", new File("tests-files/restored-kanoute.bmp"));
 			ImageIO.write(im, "bmp", new File("tests-files/restored-titomc.bmp"));
+			//ImageIO.write(im, "bmp", new File("tests-files/restored-facepalm.bmp"));
+			//ImageIO.write(im, "bmp", new File("tests-files/restored-yoshi.bmp"));
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -216,7 +231,7 @@ public class EmbeddingExtractionAlgorithmC24Test {
 	//Inyectamos en el canal B
 	@Test
 	public void testEmbeddingLena(){		
-		img = new ImagePlus("tests-files/lena512color.bmp");
+		img = new ImagePlus("tests-files/rgb/lena512color.bmp");
 		m = 8;
 		n = 8;
 		t = 128;
@@ -294,11 +309,13 @@ public class EmbeddingExtractionAlgorithmC24Test {
 	//Inyectamos en el canal R
 	@Test
 	public void testEmbeddingLenaR(){		
-		img = new ImagePlus("tests-files/lena512color.bmp");
+		img = new ImagePlus("tests-files/rgb/lena512color.bmp");
 		m = 8;
 		n = 8;
 		t = 128;
 		g = 64;
+		//Es importante seleccionar el canal en la validación también
+		val.setSelectedChannel(0);
 		beta1 = val.getBeta1(g, t, m, n);
 		beta2 = val.getBeta2(g, t, m, n);
 		System.out.println("Beta 1 = "+beta1);
@@ -345,6 +362,8 @@ public class EmbeddingExtractionAlgorithmC24Test {
 		n = 8;
 		t = 128;
 		g = 64;
+		//Es importante seleccionar el canal en la validación también
+		val.setSelectedChannel(0);
 		stegoImg = new ImagePlus("tests-files/stego-lena512color.bmp");
 		beta1 = ext.getBeta1(g, t, m, n);
 		beta2 = ext.getBeta2(g, t, m, n);
@@ -373,11 +392,13 @@ public class EmbeddingExtractionAlgorithmC24Test {
 	//Inyectamos en el canal G
 	@Test
 	public void testEmbeddingLenaG(){		
-		img = new ImagePlus("tests-files/lena512color.bmp");
+		img = new ImagePlus("tests-files/rgb/lena512color.bmp");
 		m = 8;
 		n = 8;
 		t = 128;
 		g = 64;
+		//Es importante seleccionar el canal en la validación también
+		val.setSelectedChannel(1);
 		beta1 = val.getBeta1(g, t, m, n);
 		beta2 = val.getBeta2(g, t, m, n);
 		System.out.println("Beta 1 = "+beta1);
@@ -424,6 +445,8 @@ public class EmbeddingExtractionAlgorithmC24Test {
 		n = 8;
 		t = 128;
 		g = 64;
+		//Es importante seleccionar el canal en la validación también
+		val.setSelectedChannel(1);
 		stegoImg = new ImagePlus("tests-files/stego-lena512color.bmp");
 		beta1 = ext.getBeta1(g, t, m, n);
 		beta2 = ext.getBeta2(g, t, m, n);
