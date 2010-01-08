@@ -26,6 +26,7 @@ public class RobustHiding_PID implements PlugInFilter {
 	private double m=8, n=8;
 	private double t=128, g=64;
 	private double n0=0, n1=0;
+	private int selectedChanel = 2;
 	private double delta=1;
 	private String choice;
 	private String imageChoice;
@@ -37,6 +38,9 @@ public class RobustHiding_PID implements PlugInFilter {
 	public static final String G8 = "Imagen escala de grises 8 bits";
 	public static final String INYECCIONYEXTRACCION = "Extraer los datos después de inyectar";
 	public static final String ESTADISTICAS = "Mostrar estadísticas";
+	public static final String C1 = "1";
+	public static final String C2= "2";
+	public static final String C3= "3";
 		
 	@Override
 	public void run(ImageProcessor ip) {
@@ -44,6 +48,9 @@ public class RobustHiding_PID implements PlugInFilter {
 		 
 		this.getInyExtPanel();
 		this.configurationPanel();
+		if(this.RGB == this.imageChoice){
+		 	this.seleccionCanal();
+		}
 		if( this.choice == RobustHiding_PID.INYECCION){
 			this.res_inyeccion = this.inyeccion();
 			if(this.extraccion){
@@ -180,6 +187,9 @@ public class RobustHiding_PID implements PlugInFilter {
 		}else{
 			 emb = new EmbeddingAlgorithmC24Impl();
 			 val = new EmbeddedValidationC24Impl();
+			 // Selecciono el canal en emb.
+			 EmbeddingAlgorithmC24Impl embeded = (EmbeddingAlgorithmC24Impl) emb;
+			 embeded.setSelectedChannel(this.selectedChanel);
 		}
 		
 		
@@ -277,6 +287,30 @@ public class RobustHiding_PID implements PlugInFilter {
 			this.extraccion = d.getNextBoolean();
 			this.estadisticas = d.getNextBoolean();
 		}
+	}
+	
+	/**
+	 * Panel para seleccionar el canal.
+	 */
+	public void seleccionCanal(){
+		GenericDialog d = new GenericDialog("Selecciona un canal.", IJ.getInstance());
+		String [] labels = {RobustHiding_PID.C1,RobustHiding_PID.C2,RobustHiding_PID.C3};
+		String canal;
+		d.addChoice("Canal", labels, labels[1]);
+		d.showDialog();
+		if(d.wasCanceled()) 
+			this.imp.close();
+		canal = d.getNextString();
+		if(canal == RobustHiding_PID.C1) {
+			this.selectedChanel = 0;
+		}else if(canal == RobustHiding_PID.C2){
+			this.selectedChanel = 1;
+		}else{
+			this.selectedChanel = 2;
+		}
+		
+		  
+		
 	}
 	
 	/**
