@@ -44,8 +44,8 @@ public class EmbeddingAlgorithmC24Impl implements EmbeddingAlgorithm {
 	}
 
 	@Override
-	public ImagePlus embedBits(ImagePlus img, byte[] bits, int g, int m, int n,
-			int t, int beta1, int beta2, int delta) {
+	public ImagePlus embedBits(ImagePlus img, byte[] bits, int t, int g, int m, int n,
+			int beta1, int beta2, int delta) {
 		
 		//FIXME calcular los alphas fuera
 		n0 = n1 = 0;
@@ -56,12 +56,15 @@ public class EmbeddingAlgorithmC24Impl implements EmbeddingAlgorithm {
 		int bitCount = 0;
 		int dataSize = bits.length * 8;
 		int[][] matrixM = RobustHidingUtils.getMatrixM(m, n);
+		int blocksCount = 0;
 
 		// mientras queden bloques
 		for (int i = 0; i <= (h - m); i = i + m) {
 			for (int j = 0; j <= (w - n); j = j + n) {
 				int alpha = getAlpha(matrixM, img.getProcessor(), i, j, delta);
-
+				
+				blocksCount++;
+				
 				if (!alphasBefore.containsKey(alpha)) {
 					alphasBefore.put(alpha, 1);
 				}
