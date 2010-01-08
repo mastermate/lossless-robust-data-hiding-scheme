@@ -8,6 +8,7 @@ import ij.process.ImageStatistics;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import es.us.pid.grupo14.AlphasImage;
 import es.us.pid.grupo14.EmbeddedValidation;
 
 public class EmbeddedValidationC24Impl implements EmbeddedValidation {
@@ -247,6 +248,12 @@ public class EmbeddedValidationC24Impl implements EmbeddedValidation {
 	public double getPSNR(ImagePlus original, ImagePlus stego) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public AlphasImage getAlphasImage(ImagePlus imp, int m, int n, int delta) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 //	@Override
