@@ -138,6 +138,8 @@ public interface EmbeddedValidation {
     * @return ber el bit error rate
     */
    public double getBitErrorRate(byte[] originalData, byte[] recoveredData, int size);
+
+   public AlphasImage getAlphasImage(ImagePlus imp, int m, int n, int delta);
    
    
 //   /**
