@@ -21,19 +21,32 @@ public class RobustHiding_PID implements PlugInFilter {
 	private double n0=0, n1=0;
 	private double delta=0;
 	private String choice;
+	private String imageChoice;
+	private boolean estadisticas;
+	private boolean extraccion;
 	public static final String INYECCION ="Inyección de datos";
 	public static final String EXTRACCION ="Extracción de datos";
+	public static final String RGB = "Imagen RGB";
+	public static final String G8 = "Imagen escala de grises 8 bits";
+	public static final String INYECCIONYEXTRACCION = "Extraer los datos después de inyectar";
+	public static final String ESTADISTICAS = "Mostrar estadísticas";
 		
 	@Override
 	public void run(ImageProcessor ip) {
 		 // Muestro el panel para seleccionar el proceso a realizar
 		 
-		getInyExtPanel();
-		 
-		if( choice == this.INYECCION){
-			inyeccion();
+		this.getInyExtPanel();
+		this.configurationPanel();
+		if( this.choice == RobustHiding_PID.INYECCION){
+			this.inyeccion();
+			if(this.extraccion){
+				
+			}
+			if(this.estadisticas){
+				this.showEstadisticas();
+			}
 		}else{	
-			extraccion();
+			this.extraccion();
 		}
 		 
 	}
@@ -209,4 +222,34 @@ public class RobustHiding_PID implements PlugInFilter {
 		res.show();
 		
 	}
+	
+	/**
+	 * Panel para configurar las acciones del plugin.
+	 */
+	public void configurationPanel(){
+		
+		GenericDialog d = new GenericDialog("Configuración del proceso de inyección y extracción.", IJ.getInstance());
+		String [] labels = {RobustHiding_PID.G8, RobustHiding_PID.RGB};
+		d.addChoice("Tipo de imagen", labels, labels[0]);
+		if(this.choice == RobustHiding_PID.INYECCION){
+			d.addCheckbox(RobustHiding_PID.INYECCIONYEXTRACCION, false);
+			d.addCheckbox(RobustHiding_PID.ESTADISTICAS, false);
+		}
+		d.showDialog();
+		if(d.wasCanceled()) 
+			this.imp.close();
+		this.imageChoice = d.getNextChoice();
+		if(this.choice == RobustHiding_PID.INYECCION){
+			this.extraccion = d.getNextBoolean();
+			this.estadisticas = d.getNextBoolean();
+		}
+	}
+	
+	/**
+	 * Genera la documentación estadística a partir de la inyección y la extracción.
+	 */
+	public void showEstadisticas(){
+		IJ.write("Se muestran las estadísticas");
+	}
+
 }
