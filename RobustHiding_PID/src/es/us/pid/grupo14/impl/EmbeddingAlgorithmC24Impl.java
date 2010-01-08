@@ -12,6 +12,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import es.us.pid.grupo14.EmbeddingAlgorithm;
+import es.us.pid.grupo14.RobustHidingUtils;
 
 public class EmbeddingAlgorithmC24Impl implements EmbeddingAlgorithm {
 	
@@ -48,7 +49,7 @@ public class EmbeddingAlgorithmC24Impl implements EmbeddingAlgorithm {
 		res.getProcessor().insert(img.getProcessor(), 0, 0);
 		int bitCount = 0;
 		int dataSize = bits.length * 8;
-		int[][] matrixM = getMatrixM(m, n);
+		int[][] matrixM = RobustHidingUtils.getMatrixM(m, n);
 
 		// mientras queden bloques
 		for (int i = 0; i <= (h - m); i = i + m) {
@@ -219,20 +220,20 @@ public class EmbeddingAlgorithmC24Impl implements EmbeddingAlgorithm {
 		}
 	}
 
-	public int[][] getMatrixM(int m, int n) {
-		int[][] res = new int[m][n];
-		for (int i = 0; i < m; i++) {
-			for (int j = 0; j < n; j++) {
-				if ((i % 2) == (j % 2)) {
-					res[i][j] = 1;
-				} else {
-					res[i][j] = -1;
-				}
-
-			}
-		}
-		return res;
-	}
+//	public int[][] getMatrixM(int m, int n) {
+//		int[][] res = new int[m][n];
+//		for (int i = 0; i < m; i++) {
+//			for (int j = 0; j < n; j++) {
+//				if ((i % 2) == (j % 2)) {
+//					res[i][j] = 1;
+//				} else {
+//					res[i][j] = -1;
+//				}
+//
+//			}
+//		}
+//		return res;
+//	}
 
 	public boolean extractBit(byte b, int index) {
 		// funcion validada

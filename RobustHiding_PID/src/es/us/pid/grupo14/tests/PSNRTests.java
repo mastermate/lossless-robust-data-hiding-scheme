@@ -54,4 +54,13 @@ public class PSNRTests {
 		assert (psnr > 0);
 	}
 	
+	@Test
+	public void test5(){
+		ImagePlus img1 = new ImagePlus("tests-files/bmp-inputs/baboon grayscale.bmp");
+		ImagePlus img2 = new ImagePlus("tests-files/bmp-outputs/Us1-Gray.bmp");
+		double psnr = val.getPSNR(img1, img2);
+		System.out.println("PSNR test 5 :"+psnr);
+		assert (psnr == 0);
+	}
+	
 }

@@ -139,6 +139,17 @@ public interface EmbeddedValidation {
     */
    public double getBitErrorRate(byte[] originalData, byte[] recoveredData, int size);
    
+   /**
+    * Metodo para calcular el objeto AlphasImage de una imagen, que contiene
+    * la matriz con los alphas, y el apha maximo de dicha imagen
+    * 
+    * @param img ImagePlus la imagen original
+    * @param m int numero de filas de la matriz M
+    * @param n int numero de columnas de la 
+    * @param delta el valor de delta
+    * @return AlphasImage el objeto AlphasImage
+    */
+   public AlphasImage getAlphasImage(ImagePlus img, int m, int n, int delta);
    
 //   /**
 //    * Devuelve el alfa máximo correspondiente a cada canal si la imagen es RGB o solo

@@ -32,51 +32,51 @@ public class RobustHidingUtils {
 		return res;
 	}
 	
-	public static AlphasImage getAlphasImage(ImagePlus img, int m, int n, int delta){
-		
-		int[][] pixels = img.getProcessor().getIntArray();
-		int w = img.getWidth(), h = img.getHeight();
-		int[][] matrixM = getMatrixM(m, n);
-		
-		
-		int fi = 0, col = 0;
-		int d1 = h/m, d2 = w/n;
-		int[][] alphas = new int[d1][d2];
-		int alphaMax = 0;
-		
-		for (int i = 0; i <= (h - m); i = i + m) {
-			for (int j = 0; j <= (w - n); j = j + n) {
-				int alpha = getAlpha(matrixM, pixels, i, j, delta);
-				alphas[fi][col] = alpha;
-				if (Math.abs(alpha) > alphaMax){
-					alphaMax = alpha;
-				}
-				col++;
-			}
-			col = 0;
-			fi++;
-		}
-		AlphasImage res = new AlphasImage();
-		res.setAlphaMax(alphaMax);
-		res.setAlphas(alphas);
-		return res;
-	}
+//	public static AlphasImage getAlphasImage(ImagePlus img, int m, int n, int delta){
+//		
+//		int[][] pixels = img.getProcessor().getIntArray();
+//		int w = img.getWidth(), h = img.getHeight();
+//		int[][] matrixM = getMatrixM(m, n);
+//		
+//		
+//		int fi = 0, col = 0;
+//		int d1 = h/m, d2 = w/n;
+//		int[][] alphas = new int[d1][d2];
+//		int alphaMax = 0;
+//		
+//		for (int i = 0; i <= (h - m); i = i + m) {
+//			for (int j = 0; j <= (w - n); j = j + n) {
+//				int alpha = getAlpha(matrixM, pixels, i, j, delta);
+//				alphas[fi][col] = alpha;
+//				if (Math.abs(alpha) > alphaMax){
+//					alphaMax = alpha;
+//				}
+//				col++;
+//			}
+//			col = 0;
+//			fi++;
+//		}
+//		AlphasImage res = new AlphasImage();
+//		res.setAlphaMax(alphaMax);
+//		res.setAlphas(alphas);
+//		return res;
+//	}
 	
-	public static int getAlpha(int[][] matrixM, int[][] pixels, int i, int j, int delta) {
-		// funcion validada
-		int alpha = 0;
-		int aLimit = i + matrixM.length, bLimit = j + matrixM[0].length;
-		int c = 0, d = 0;
-		for (int a = i; a < aLimit; a++) {
-			d = 0;
-			for (int b = j; b < bLimit; b++) {
-				alpha = alpha + (delta * matrixM[c][d] * pixels[b][a]);
-				d++;
-			}
-			c++;
-		}
-		return alpha;
-	}
+//	public static int getAlpha(int[][] matrixM, int[][] pixels, int i, int j, int delta) {
+//		// funcion validada
+//		int alpha = 0;
+//		int aLimit = i + matrixM.length, bLimit = j + matrixM[0].length;
+//		int c = 0, d = 0;
+//		for (int a = i; a < aLimit; a++) {
+//			d = 0;
+//			for (int b = j; b < bLimit; b++) {
+//				alpha = alpha + (delta * matrixM[c][d] * pixels[b][a]);
+//				d++;
+//			}
+//			c++;
+//		}
+//		return alpha;
+//	}
 	
 	public static int[][] getMatrixM(int m, int n) {
 		int[][] res = new int[m][n];

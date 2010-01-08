@@ -43,7 +43,7 @@ public class EmbeddingAlgorithmG8Tests {
 
 	@Before
 	public void setUp(){
-		img = new ImagePlus("tests-files/lena512.bmp");
+		img = new ImagePlus("tests-files/bmp-inputs/lena512.bmp");
 		emb = new EmbeddingAlgorithmG8Impl();
 		val = new EmbeddedValidationG8Impl();
 		//data = new byte[10];
@@ -76,14 +76,14 @@ public class EmbeddingAlgorithmG8Tests {
 //		res.show();
 		BufferedImage im = res.getBufferedImage();
 		try {
-			ImageIO.write(im, "bmp", new File("tests-files/stego-lena.bmp"));
+			ImageIO.write(im, "bmp", new File("tests-files/bmp-outputs/stego-lena.bmp"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 	}
 	
-	@Test
+//	@Test
 	public void test2(){
 //		img = new ImagePlus("tests-files/Us1-Gray.bmp");
 //		FileInputStream fis = new FileInputStream("tests-files/prueba.txt");

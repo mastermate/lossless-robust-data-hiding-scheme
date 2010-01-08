@@ -8,7 +8,10 @@ import ij.process.ImageStatistics;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import es.us.pid.grupo14.AlphasImage;
 import es.us.pid.grupo14.EmbeddedValidation;
+import es.us.pid.grupo14.HidingResult;
+import es.us.pid.grupo14.RobustHidingUtils;
 
 public class EmbeddedValidationC24Impl implements EmbeddedValidation {
 	
@@ -116,19 +119,20 @@ public class EmbeddedValidationC24Impl implements EmbeddedValidation {
 
 	@Override
 	public int[][] getMatrixM(int m, int n) {
-		int[][] res = new int[m][n];
-		for (int i = 0; i < m; i++){
-			for (int j = 0; j < n; j++){
-				if ( (i % 2) == (j % 2) ){
-					res[i][j] = 1;
-				}
-				else{
-					res[i][j] = -1;
-				}
-				
-			}
-		}
-		return res;
+//		int[][] res = new int[m][n];
+//		for (int i = 0; i < m; i++){
+//			for (int j = 0; j < n; j++){
+//				if ( (i % 2) == (j % 2) ){
+//					res[i][j] = 1;
+//				}
+//				else{
+//					res[i][j] = -1;
+//				}
+//				
+//			}
+//		}
+//		return res;
+		return RobustHidingUtils.getMatrixM(m, n);
 	}
 
 	@Override
@@ -239,25 +243,89 @@ public class EmbeddedValidationC24Impl implements EmbeddedValidation {
 	@Override
 	public double getBitErrorRate(byte[] originalData, byte[] recoveredData,
 			int size) {
-		// TODO Auto-generated method stub
-		return 0;
+		return RobustHidingUtils.getBitErrorRate(originalData, recoveredData, size);
 	}
 
 	@Override
 	public double getPSNR(ImagePlus original, ImagePlus stego) {
-		// TODO Auto-generated method stub
-		return 0;
+		// TODO testear este metodo
+		if ((original.getWidth() == stego.getWidth()) && 
+				(original.getHeight() == stego.getHeight())){
+			double sum = 0;
+			int h = original.getHeight(), w = original.getWidth();
+			ImageProcessor originalIp = original.getProcessor();
+			ImageProcessor stegoIp = stego.getProcessor();
+			for (int i = 0; i < h; i++) {
+				for (int j = 0; j < w; j++) {
+					int[] originalRGB = originalIp.getPixel(j, i, null);  
+					int[] stegoRGB = stegoIp.getPixel(j, i, null);
+					for (int k = 0; k < 3; k++){
+						double aux = originalRGB[k] - stegoRGB[k];
+						double aux2 = Math.pow(aux, 2);
+						sum = sum + aux2;
+					}		
+				}
+			}
+			//al ser RGB
+			sum = sum/3;
+			int bitDepth = original.getBitDepth();
+			double maxValue = Math.pow(2, bitDepth) - 1;
+			double preRes = (maxValue * maxValue * w * h) / sum;
+			double res = 10 * Math.log10(preRes);
+			return res;
+		}
+		else{
+			return 0;
+		}
 	}
 
-//	@Override
-//	public int[] getAlphaMax(ImagePlus img, int beta1, int beta2, int m, int n) {
-//		int[] alphaMax = new int[3];
-//		ImageProcessor ip = img.getProcessor();
-//		for (int i = 0; i < alphaMax.length; i+= m) {
-//			for (int j = 0; j < alphaMax.length; j+= n) {
-//				
-//			}
-//		}
-//		return null;
-//	}
+	@Override
+	public AlphasImage getAlphasImage(ImagePlus img, int m, int n, int delta) {
+		// TODO hay que testearla
+		int w = img.getWidth(), h = img.getHeight();
+		int[][] matrixM = getMatrixM(m, n);
+		
+		
+		int fi = 0, col = 0;
+		int d1 = h/m, d2 = w/n;
+		int[][] alphas = new int[d1][d2];
+		int alphaMax = 0;
+		ImageProcessor ip = img.getProcessor();
+		
+		for (int i = 0; i <= (h - m); i = i + m) {
+			for (int j = 0; j <= (w - n); j = j + n) {
+				int alpha = getAlpha(matrixM, ip, i, j, delta);
+				alphas[fi][col] = alpha;
+				if (Math.abs(alpha) > alphaMax){
+					alphaMax = alpha;
+				}
+				col++;
+			}
+			col = 0;
+			fi++;
+		}
+		AlphasImage res = new AlphasImage();
+		res.setAlphaMax(alphaMax);
+		res.setAlphas(alphas);
+		return res;
+	}
+
+	public int getAlpha(int[][] matrixM, ImageProcessor image, int i, int j, int delta) {
+		// funcion validada
+		int alpha = 0;
+		int aLimit = i + matrixM.length, bLimit = j + matrixM[0].length;
+		int c = 0, d = 0;
+		int[] value = new int[3];
+		for (int a = i; a < aLimit; a++) {
+			d = 0;
+			for (int b = j; b < bLimit; b++) {
+				value = image.getPixel(b, a, value);
+				alpha = alpha + (delta * matrixM[c][d] * value[selectedChannel]);
+				d++;
+			}
+			c++;
+		}
+		return alpha;
+	}
+	
 }

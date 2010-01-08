@@ -45,8 +45,8 @@ public class ExtractionAlgorithmG8Test {
 
 	@Before
 	public void setUp(){
-		stegoImg = new ImagePlus("tests-files/stego-lena.bmp");
-		originalImg = new ImagePlus("tests-files/lena512.bmp");
+		stegoImg = new ImagePlus("tests-files/bmp-outputs/stego-lena.bmp");
+		originalImg = new ImagePlus("tests-files/bmp-inputs/lena512.bmp");
 		ext = new ExtractionAlgorithmG8Impl();
 		ev = new EmbeddedValidationG8Impl();
 		//data = new byte[10];
@@ -80,7 +80,7 @@ public class ExtractionAlgorithmG8Test {
 		imgRest.show();
 		BufferedImage im = imgRest.getBufferedImage();
 		try {
-			ImageIO.write(im, "bmp", new File("tests-files/restored-lena.bmp"));
+			ImageIO.write(im, "bmp", new File("tests-files/bmp-outputs/restored-lena.bmp"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

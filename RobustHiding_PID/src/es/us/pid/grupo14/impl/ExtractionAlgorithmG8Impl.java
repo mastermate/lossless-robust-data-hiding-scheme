@@ -21,15 +21,17 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 		// TODO Hacerlo para cuando la imagen esté comprimida
 		int t, g;
 		int[][] matrixM = getMatrixM(m, n);
-		if (isJpgImage(stegoImg)){
-			int[] tAndG = getNewTandG(stegoImg,n0,n1,m,n,delta,matrixM);
-			t = tAndG[0];
-			g = tAndG[1];
-		}
-		else{
-			t = t1;
-			g = g1;
-		}
+//		if (isJpgImage(stegoImg)){
+//			int[] tAndG = getNewTandG(stegoImg,n0,n1,m,n,delta,matrixM);
+//			t = tAndG[0];
+//			g = tAndG[1];
+//		}
+//		else{
+//			t = t1;
+//			g = g1;
+//		}
+		t = t1;
+		g = g1;
 		int w = stegoImg.getWidth(), h = stegoImg.getHeight();
 		int beta1 = delta * getBeta1(g,t,m,n);
 		int beta2 = delta * getBeta2(g,t,m,n);
@@ -158,10 +160,10 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 		//FIXME dejar los true y false bien al final
 		String imgName = stegoImg.getTitle();
 		if (imgName.endsWith(".jpg") || imgName.endsWith(".jpeg")){
-			return false;
+			return true;
 		}
 		else{
-			return false;
+			return true;
 		}
 	}
 

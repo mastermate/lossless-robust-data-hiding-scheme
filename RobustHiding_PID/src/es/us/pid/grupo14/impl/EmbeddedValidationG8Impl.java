@@ -5,6 +5,7 @@ import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
 import es.us.pid.grupo14.AlphasImage;
 import es.us.pid.grupo14.EmbeddedValidation;
+import es.us.pid.grupo14.RobustHidingUtils;
 import ij.io.OpenDialog;
 
 import java.io.IOException;
@@ -81,18 +82,19 @@ public class EmbeddedValidationG8Impl implements EmbeddedValidation {
 
 	@Override
 	public int[][] getMatrixM(int m, int n) {
-		int[][] res = new int[m][n];
-		for (int i = 0; i < m; i++) {
-			for (int j = 0; j < n; j++) {
-				if ((i % 2) == (j % 2)) {
-					res[i][j] = 1;
-				} else {
-					res[i][j] = -1;
-				}
-
-			}
-		}
-		return res;
+//		int[][] res = new int[m][n];
+//		for (int i = 0; i < m; i++) {
+//			for (int j = 0; j < n; j++) {
+//				if ((i % 2) == (j % 2)) {
+//					res[i][j] = 1;
+//				} else {
+//					res[i][j] = -1;
+//				}
+//
+//			}
+//		}
+//		return res;
+		return RobustHidingUtils.getMatrixM(m, n);
 	}
 
 	@Override
@@ -245,7 +247,7 @@ public class EmbeddedValidationG8Impl implements EmbeddedValidation {
 			int[][] m2 = stego.getProcessor().getIntArray();
 			for (int i = 0; i < m1.length; i++) {
 				for (int j = 0; j < m1[i].length; j++) {
-					double aux = (m1[i][j] - m2[i][j]);
+					double aux = (m1[j][i] - m2[j][i]);
 					double aux2 = Math.pow(aux, 2);
 					sum = sum + aux2;
 				}
