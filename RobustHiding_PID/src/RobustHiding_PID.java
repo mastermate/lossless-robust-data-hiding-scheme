@@ -179,7 +179,7 @@ public class RobustHiding_PID implements PlugInFilter {
 		
 		EmbeddingAlgorithm emb;
 		EmbeddedValidation val;
-		
+		 
 		//Instancias para validar e inyectar informaci—n en la imagen
 		if(this.imageChoice == this.G8){
 			 emb = new EmbeddingAlgorithmG8Impl();
