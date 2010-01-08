@@ -21,11 +21,16 @@ public class EmbeddingAlgorithmC24Impl implements EmbeddingAlgorithm {
 	private Hashtable<Integer,Integer> alphasBefore;
 	private Hashtable<Integer,Integer> alphasAfter;
 	
+	private int n0;
+	
+	private int n1;
+	
 	public EmbeddingAlgorithmC24Impl() {
 		super();
 		selectedChannel = 2;
 		alphasBefore = new Hashtable<Integer,Integer>();
 		alphasAfter = new Hashtable<Integer,Integer>();
+		n0 = n1 = 0;
 	}
 
 	public int getSelectedChannel() {
@@ -43,6 +48,7 @@ public class EmbeddingAlgorithmC24Impl implements EmbeddingAlgorithm {
 			int t, int beta1, int beta2, int delta) {
 		
 		//FIXME calcular los alphas fuera
+		n0 = n1 = 0;
 		int w = img.getWidth(), h = img.getHeight();
 		ImageProcessor ip = new ColorProcessor(w, h);
 		ImagePlus res = new ImagePlus("stego-image", ip);
@@ -111,6 +117,7 @@ public class EmbeddingAlgorithmC24Impl implements EmbeddingAlgorithm {
 		int[] value = new int[3];
 
 		if (bitValue) {
+			n1++;
 			if (alpha >= 0) {
 				for (int a = i; a < aLimit; a++) {
 					for (int b = j; b < bLimit; b++) {
@@ -140,6 +147,7 @@ public class EmbeddingAlgorithmC24Impl implements EmbeddingAlgorithm {
 			}
 
 		} else {
+			n0++;
 			for (int a = i; a < aLimit; a++) {
 				for (int b = j; b < bLimit; b++) {
 					ip.putPixel(b, a, originalImage.getPixel(b, a, value));
@@ -372,13 +380,11 @@ public class EmbeddingAlgorithmC24Impl implements EmbeddingAlgorithm {
 
 	@Override
 	public int getN0() {
-		// TODO Auto-generated method stub
-		return 0;
+		return n0;
 	}
 
 	@Override
 	public int getN1() {
-		// TODO Auto-generated method stub
-		return 0;
+		return n1;
 	}
 }

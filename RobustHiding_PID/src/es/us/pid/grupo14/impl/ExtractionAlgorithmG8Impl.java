@@ -33,8 +33,8 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 		t = t1;
 		g = g1;
 		int w = stegoImg.getWidth(), h = stegoImg.getHeight();
-		int beta1 = delta * getBeta1(g,t,m,n);
-		int beta2 = delta * getBeta2(g,t,m,n);
+		int beta1 = delta * getBeta1(g1,t1,m,n);
+		int beta2 = delta * getBeta2(g1,t1,m,n);
 		ImageProcessor ip = new ByteProcessor(w, h);
 		ImagePlus recoveredImg = new ImagePlus("recovered-image",ip);
 		recoveredImg.getProcessor().insert(stegoImg.getProcessor(), 0, 0);
@@ -90,7 +90,6 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 		int[][] pixels = stegoImg.getProcessor().getIntArray();
 		int dataBitsSize = n0 + n1;
 		int contBlocks = 0;
-		//int cont0 = 0, cont1 = 0;
 		
 		//obtenemos la distribucion solo de los alphas que se han usado
 		//para embeber bits
@@ -135,10 +134,11 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 			alphaCont++;
 		}
 		
-		res[0] = alphaCont - 1;
+//		res[0] = alphaCont - 1;
+		res[0] = alphaCont + 1;
 		
-		int cont1 = cont0 - n0;
-		while (cont1 < n1){
+		int cont1 = cont0;
+		while (cont1 < (n0 + n1)){
 			if (dist.containsKey(alphaCont)){
 				int valPos = dist.get(alphaCont);
 				cont1 = cont1 + valPos;
@@ -150,7 +150,8 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 			alphaCont++;
 		}
 		
-		int adj1 = alphaCont - 1;
+//		int adj1 = alphaCont - 1;
+		int adj1 = alphaCont + 1;
 		res[1] = adj1 - 2*res[0];
 		
 		return res;
