@@ -5,21 +5,28 @@ import ij.gui.GenericDialog;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 import es.us.pid.grupo14.AlphasImage;
+import es.us.pid.grupo14.EmbeddedValidation;
+import es.us.pid.grupo14.EmbeddingAlgorithm;
 import es.us.pid.grupo14.ExtractionAlgorithm;
 import es.us.pid.grupo14.HidingResult;
 import es.us.pid.grupo14.impl.EmbeddingAlgorithmG8Impl;
 import es.us.pid.grupo14.impl.EmbeddedValidationG8Impl;
 import es.us.pid.grupo14.impl.ExtractionAlgorithmG8Impl;
+import es.us.pid.grupo14.impl.EmbeddedValidationC24Impl;
+import es.us.pid.grupo14.impl.EmbeddingAlgorithmC24Impl;
+import es.us.pid.grupo14.impl.ExtractionAlgorithmC24Impl;
 
 import java.io.IOException;
 
 public class RobustHiding_PID implements PlugInFilter {
 
 	private ImagePlus imp;
+	private ImagePlus res_inyeccion;
+	private ImagePlus res_extraccion;
 	private double m=8, n=8;
 	private double t=128, g=64;
 	private double n0=0, n1=0;
-	private double delta=0;
+	private double delta=1;
 	private String choice;
 	private String imageChoice;
 	private boolean estadisticas;
@@ -38,9 +45,9 @@ public class RobustHiding_PID implements PlugInFilter {
 		this.getInyExtPanel();
 		this.configurationPanel();
 		if( this.choice == RobustHiding_PID.INYECCION){
-			this.inyeccion();
+			this.res_inyeccion = this.inyeccion();
 			if(this.extraccion){
-				
+				this.extraccion();
 			}
 			if(this.estadisticas){
 				this.showEstadisticas();
@@ -54,7 +61,7 @@ public class RobustHiding_PID implements PlugInFilter {
 	@Override
 	public int setup(String arg, ImagePlus imp) {
 		this.imp = imp;
-		return PlugInFilter.DOES_8G;
+		return PlugInFilter.DOES_8G + PlugInFilter.DOES_RGB;
 	}
 	
 	/**
@@ -117,9 +124,9 @@ public class RobustHiding_PID implements PlugInFilter {
 		d.addNumericField("Número de columnas de la matriz M:",this.n, 0, 3, "n");
 		d.addNumericField("Constante T:", this.t, 0, 3, "T");
 		d.addNumericField("Constante G:", this.g, 0, 3, "G");
-		d.addNumericField("Constante delta:", this.g, 0, 3, "G");
-		d.addNumericField("Constante N0:", this.g, 0, 3, "número de ceros");
-		d.addNumericField("Constante N1:", this.g, 0, 3, "número de unos");
+		d.addNumericField("Constante delta:", this.delta, 0, 3, "delta");
+		d.addNumericField("Constante N0:", this.n0, 0, 3, "número de ceros");
+		d.addNumericField("Constante N1:", this.n1, 0, 3, "número de unos");
 		d.showDialog();
 		if(d.wasCanceled()) 
 			this.imp.close();
@@ -160,14 +167,25 @@ public class RobustHiding_PID implements PlugInFilter {
 		}
 	}
 	
-	public void inyeccion(){
+	
+	public ImagePlus inyeccion(){
+		
+		EmbeddingAlgorithm emb;
+		EmbeddedValidation val;
 		
 		//Instancias para validar e inyectar información en la imagen
-		EmbeddingAlgorithmG8Impl emb = new EmbeddingAlgorithmG8Impl();
-		EmbeddedValidationG8Impl val = new EmbeddedValidationG8Impl();
+		if(this.imageChoice == this.G8){
+			 emb = new EmbeddingAlgorithmG8Impl();
+			 val = new EmbeddedValidationG8Impl();
+		}else{
+			 emb = new EmbeddingAlgorithmC24Impl();
+			 val = new EmbeddedValidationC24Impl();
+		}
+		
+		
 		byte [] data;
 		
-		
+
 		// Panel para cargar un archivo que inyectar a la imagen en pantalla.
 		 try {
 			 data = val.readFile();
@@ -175,7 +193,7 @@ public class RobustHiding_PID implements PlugInFilter {
 			 IJ.write("Lo siento, el fichero que quieres inyectar no se puede abrir." +
 			 		"Inténtalo con otro archivo.");
 			 data = null;
-			 return;
+			 return null;
 		 }
 		 
 		// Panel para obtener los valores de m, n, g y t.
@@ -201,21 +219,37 @@ public class RobustHiding_PID implements PlugInFilter {
 		ImagePlus res = emb.embedBits(this.imp, data, (int) t, (int) g, (int) m, (int) n, beta1, beta2, delta);
 		res.show();
 		
+		// Almaceno el delta, el número de ceros (n0) y el número de unos (n1)
+		this.delta = delta;
+		this.n0 = emb.getN0();
+		this.n1 = emb.getN1();
+		// Muesro en pantalla los resultados obtenidos.
 		IJ.showMessage("Los datos se han terminado de inyectar.\n" +
 				"La inyección se ha realizado con un valor de delta igual a " + delta +", \n" +
 				 ", con un número de ceros igual a "+ emb.getN0() + "\n y un número de unos igual a" + emb.getN1()
 				+ "Este valor se le pedirá cuando quiera extraer la información de la imagen \n " +
 				   "resultante en el proceso de inyección");
+		return res;
 	}
 	
 	/**
 	 * Realiza la inyección de datos en una imagen.
 	 */
 	public void extraccion(){
-		ExtractionAlgorithm ext = new ExtractionAlgorithmG8Impl();
+		ExtractionAlgorithm ext;
+		if(this.imageChoice == this.G8){
+			 ext = new ExtractionAlgorithmG8Impl();
+		}else{
+			 ext = new ExtractionAlgorithmC24Impl();
+		}
 		getVariablePanelExtraccion();
 		HidingResult hres = new HidingResult();
-		hres = ext.extractBits(this.imp, (int) m, (int) n, (int) t, (int) g, (int) delta, (int) n0, (int) n1);
+		if(this.extraccion){
+			hres = ext.extractBits(this.res_inyeccion, (int) m, (int) n, (int) t, (int) g, (int) delta, (int) n0, (int) n1);
+		}else{
+			hres = ext.extractBits(this.imp, (int) m, (int) n, (int) t, (int) g, (int) delta, (int) n0, (int) n1);
+		}
+		
 		String texto = new String(hres.getData());
 		IJ.showMessage("El texto que se ha obtenido de la extracción es: \n" + texto);
 		ImagePlus res = hres.getImg();
