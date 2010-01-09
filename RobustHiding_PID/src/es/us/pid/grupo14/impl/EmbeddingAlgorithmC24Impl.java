@@ -81,26 +81,27 @@ public class EmbeddingAlgorithmC24Impl implements EmbeddingAlgorithm {
 				}
 			}
 			
-			/**
-			 * TODO: Esto debería de estar en una fución a parte. Calculo la
-			 * frecuencia de los distintos valores de alpha una vez se ha
-			 * realizado la inyección
-			 **/
-			for (int i2 = 0; i2 < (h - m); i2 = i2 + m) {
-				for (int j2 = 0; j2 < (w - n); j2 = j2 + n) {
-					int alphaStego = getAlpha(matrixM, res.getProcessor(), i2, j2, delta);
-					// voy guardando la frecuencia acumulada
-					if (!alphasAfter.containsKey(alphaStego)) {
-						alphasAfter.put(alphaStego, 1);
-					}
-					alphasAfter.put(alphaStego, alphasAfter.get(alphaStego) + 1);
-				}
-			}
+			
 
 			// Muesto los dos histogramas en pantalla nada más terminar con la
 			// inyección
 			
 
+		}
+		/**
+		 * TODO: Esto debería de estar en una fución a parte. Calculo la
+		 * frecuencia de los distintos valores de alpha una vez se ha
+		 * realizado la inyección
+		 **/
+		for (int i2 = 0; i2 <= (h - m); i2 = i2 + m) {
+			for (int j2 = 0; j2 <= (w - n); j2 = j2 + n) {
+				int alphaStego = getAlpha(matrixM, res.getProcessor(), i2, j2, delta);
+				// voy guardando la frecuencia acumulada
+				if (!alphasAfter.containsKey(alphaStego)) {
+					alphasAfter.put(alphaStego, 1);
+				}
+				alphasAfter.put(alphaStego, alphasAfter.get(alphaStego) + 1);
+			}
 		}
 		getAlphaDist(alphasBefore, "Distribucion del canal "+selectedChannel+" antes de inyectar los datos");
 		getAlphaDist(alphasAfter, "Distribucion del canal "+selectedChannel+" despues de inyectar los datos");

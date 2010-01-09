@@ -35,12 +35,12 @@ public class RobustHiding_PID implements PlugInFilter {
 	private String imageChoice;
 	private boolean estadisticas;
 	private boolean extraccion;
-	public static final String INYECCION ="Inyecci—n de datos";
-	public static final String EXTRACCION ="Extracci—n de datos";
+	public static final String INYECCION ="Inyección de datos";
+	public static final String EXTRACCION ="Extracción de datos";
 	public static final String RGB = "Imagen RGB";
 	public static final String G8 = "Imagen escala de grises 8 bits";
-	public static final String INYECCIONYEXTRACCION = "Extraer los datos despuŽs de inyectar";
-	public static final String ESTADISTICAS = "Mostrar estad’sticas";
+	public static final String INYECCIONYEXTRACCION = "Extraer los datos después de inyectar";
+	public static final String ESTADISTICAS = "Mostrar estadísticas";
 	public static final String C1 = "1";
 	public static final String C2= "2";
 	public static final String C3= "3";
@@ -60,7 +60,7 @@ public class RobustHiding_PID implements PlugInFilter {
 				try {
 					this.extraccion();
 				} catch (IOException e) {
-					IJ.showMessage("No se ha podido guardar los datos extraidos.");
+					IJ.showMessage("No se ha podido guardar los datos extraídos.");
 				}
 			}
 			if(this.estadisticas){
@@ -70,7 +70,7 @@ public class RobustHiding_PID implements PlugInFilter {
 			try {
 				this.extraccion();
 			} catch (IOException e) {
-				IJ.showMessage("No se ha podido guardar los datos extraidos.");
+				IJ.showMessage("No se ha podido guardar los datos extraídos.");
 			}
 		}
 		 
@@ -88,8 +88,8 @@ public class RobustHiding_PID implements PlugInFilter {
 	public void  getVariablePanel(){
 		
 		GenericDialog d = new GenericDialog("Indique los valores de las siguientes variables", IJ.getInstance());
-		d.addNumericField("Nœmero de filas de la matriz M:", this.m, 0, 3,"m");
-		d.addNumericField("Nœmero de columnas de la matriz M:",this.n, 0, 3, "n");
+		d.addNumericField("Número de filas de la matriz M:", this.m, 0, 3,"m");
+		d.addNumericField("Número de columnas de la matriz M:",this.n, 0, 3, "n");
 		d.addNumericField("Constante T:", this.t, 0, 3, "T");
 		d.addNumericField("Constante G:", this.g, 0, 3, "G");
 		d.showDialog();
@@ -119,11 +119,11 @@ public class RobustHiding_PID implements PlugInFilter {
 
 	
 	/**
-	 * Genera el panel de selecci—n de algoritmo, inyecci—n o extracci—n de datos.
+	 * Genera el panel de selección de algoritmo, inyección o extracción de datos.
 	 */
 	public void getInyExtPanel(){
-		GenericDialog d = new GenericDialog("Seleccione quŽ proceso quiere realizar", IJ.getInstance());
-		String [] labels = {"Inyecci—n de datos", "Extracci—n de datos"};
+		GenericDialog d = new GenericDialog("Seleccione qué proceso quiere realizar", IJ.getInstance());
+		String [] labels = {"Inyección de datos", "Extracción de datos"};
 		d.addChoice("Procesos:", labels, labels[0]);
 		d.showDialog();
 		if(d.wasCanceled()) 
@@ -138,13 +138,13 @@ public class RobustHiding_PID implements PlugInFilter {
 	public void getVariablePanelExtraccion(){
 		
 		GenericDialog d = new GenericDialog("Indique los valores de las siguientes variables", IJ.getInstance());
-		d.addNumericField("Nœmero de filas de la matriz M:", this.m, 0, 3,"m");
-		d.addNumericField("Nœmero de columnas de la matriz M:",this.n, 0, 3, "n");
+		d.addNumericField("Número de filas de la matriz M:", this.m, 0, 3,"m");
+		d.addNumericField("Número de columnas de la matriz M:",this.n, 0, 3, "n");
 		d.addNumericField("Constante T:", this.t, 0, 3, "T");
 		d.addNumericField("Constante G:", this.g, 0, 3, "G");
 		d.addNumericField("Constante delta:", this.delta, 0, 3, "delta");
-		d.addNumericField("Constante N0:", this.n0, 0, 3, "nœmero de ceros");
-		d.addNumericField("Constante N1:", this.n1, 0, 3, "nœmero de unos");
+		d.addNumericField("Constante N0:", this.n0, 0, 3, "número de ceros");
+		d.addNumericField("Constante N1:", this.n1, 0, 3, "número de unos");
 		d.showDialog();
 		if(d.wasCanceled()) 
 			this.imp.close();
@@ -211,17 +211,17 @@ public class RobustHiding_PID implements PlugInFilter {
 		 try {
 			 data = val.readFile();
 		 }catch (IOException e) {
-			 IJ.write("Lo siento, el fichero que quieres inyectar no se puede abrir." +
-			 		"IntŽntalo con otro archivo.");
+			 IJ.write("Lo siento, el fichero que quieres inyectar no se puede abrir. " +
+			 		"Inténtalo con otro archivo.");
 			 data = null;
 			 return null;
 		 }
 		 
 		// Panel para obtener los valores de m, n, g y t.
 		 String texto = new String(data);
-		IJ.showMessage("La informaci—n que se va a inyectar es:\n "+ texto);
+		IJ.showMessage("La información que se va a inyectar es:\n "+ texto);
 		 
-		IJ.showMessage("Ya tenemos los datos que vamos a inyectar. Ahora se le pedir‡ que introduzca los valores \n" +
+		IJ.showMessage("Ya tenemos los datos que vamos a inyectar. Ahora se le pedirá que introduzca los valores \n" +
 				" de unas varibles que el altgoritmo necesita.");
 		 getVariablePanel();
 		//calculo los betas para generar el histograma
@@ -234,27 +234,27 @@ public class RobustHiding_PID implements PlugInFilter {
 		this.imp = val.reescaleHistogram(imp, histogramType, beta1, beta2, tGreaterAlphaMax);
 		int delta = val.getDelta(histogramType);
 		
-		IJ.showMessage("Ya tenemos calculado todos los par‡metros necesarios para realizar la inyecci—n. \n" +
-				"A continuaci—n se mostrar‡ en pantalla la stego imagen y las distribuciones de alpha, antes y \n despuŽs del proceso" +
-				"de inyecci—n.");
+		IJ.showMessage("Ya tenemos calculados todos los parámetros necesarios para realizar la inyección. \n" +
+				"A continuación se mostrará en pantalla la stego imagen y las distribuciones de alpha, antes y \n" +
+				"después del proceso de inyección.");
 		ImagePlus res = emb.embedBits(this.imp, data, (int) t, (int) g, (int) m, (int) n, beta1, beta2, delta);
 		res.show();
 		
-		// Almaceno el delta, el nœmero de ceros (n0) y el nœmero de unos (n1)
+		// Almaceno el delta, el número de ceros (n0) y el número de unos (n1)
 		this.delta = delta;
 		this.n0 = emb.getN0();
 		this.n1 = emb.getN1();
 		// Muesro en pantalla los resultados obtenidos.
 		IJ.showMessage("Los datos se han terminado de inyectar.\n" +
-				"La inyecci—n se ha realizado con un valor de delta igual a " + delta +", \n" +
-				 ", con un nœmero de ceros igual a "+ emb.getN0() + "\n y un nœmero de unos igual a" + emb.getN1()
-				+ "Este valor se le pedir‡ cuando quiera extraer la informaci—n de la imagen \n " +
-				   "resultante en el proceso de inyecci—n");
+				"La inyección se ha realizado con un valor de delta igual a " + delta +", \n" +
+				 "con un número de ceros igual a "+ emb.getN0() + " y un número de unos igual a" + emb.getN1()+".\n" +
+				 		"Este valor se le pedirá cuando quiera extraer la información de la imagen \n " +
+				   "resultante en el proceso de inyección.");
 		return res;
 	}
 	
 	/**
-	 * Realiza la inyecci—n de datos en una imagen.
+	 * Realiza la inyección de datos en una imagen.
 	 * @throws IOException 
 	 */
 	public void extraccion() throws IOException{
@@ -274,7 +274,7 @@ public class RobustHiding_PID implements PlugInFilter {
 		
 		String texto = new String(hres.getData());
 		this.getPanelSalvarArchivo(texto);
-		IJ.showMessage("El texto que se ha obtenido correctamente y ha sido guardado.");
+		IJ.showMessage("El texto se ha obtenido correctamente y ha sido guardado.");
 		ImagePlus res = hres.getImg();
 		res.show();
 		
@@ -285,7 +285,7 @@ public class RobustHiding_PID implements PlugInFilter {
 	 */
 	public void configurationPanel(){
 		
-		GenericDialog d = new GenericDialog("Configuraci—n del proceso de inyecci—n y extracci—n.", IJ.getInstance());
+		GenericDialog d = new GenericDialog("Configuración del proceso de inyección y extracción.", IJ.getInstance());
 		String [] labels = {RobustHiding_PID.G8, RobustHiding_PID.RGB};
 		d.addChoice("Tipo de imagen", labels, labels[0]);
 		if(this.choice == RobustHiding_PID.INYECCION){
@@ -324,7 +324,7 @@ public class RobustHiding_PID implements PlugInFilter {
 	}
 	
 	public void getPanelSalvarArchivo(String texto) throws IOException{
-		SaveDialog sd = new SaveDialog("Seleccione donde guardar el texto extraido.", "texto extraido", ".txt");
+		SaveDialog sd = new SaveDialog("Seleccione donde guardar el texto extraído.", "texto extraido", ".txt");
 		String directory = sd.getDirectory();
 		String filename = sd.getFileName();
 		if(filename == null){return;}
@@ -338,10 +338,10 @@ public class RobustHiding_PID implements PlugInFilter {
 	}
 	
 	/**
-	 * Genera la documentaci—n estad’stica a partir de la inyecci—n y la extracci—n.
+	 * Genera la documentación estadística a partir de la inyección y la extracción.
 	 */
 	public void showEstadisticas(){
-		IJ.write("Se muestran las estad’sticas");
+		IJ.write("Se muestran las estadísticas");
 	}
 
 }

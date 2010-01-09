@@ -1,0 +1,2 @@
+In mathematics, iterated function systems or IFSs are a method of 
+constructing fractals; the resulting constructions are always self-similar.
