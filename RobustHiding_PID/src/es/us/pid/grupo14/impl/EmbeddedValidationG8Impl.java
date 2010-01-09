@@ -242,19 +242,19 @@ public class EmbeddedValidationG8Impl implements EmbeddedValidation {
 		
 		if ((original.getWidth() == stego.getWidth()) && 
 				(original.getHeight() == stego.getHeight())){
+			int h = original.getHeight(), w = original.getWidth();
 			double sum = 0;
 			int[][] m1 = original.getProcessor().getIntArray();
 			int[][] m2 = stego.getProcessor().getIntArray();
-			for (int i = 0; i < m1.length; i++) {
-				for (int j = 0; j < m1[i].length; j++) {
+			for (int i = 0; i < h; i++) {
+				for (int j = 0; j < w; j++) {
 					double aux = (m1[j][i] - m2[j][i]);
 					double aux2 = Math.pow(aux, 2);
 					sum = sum + aux2;
 				}
 			}
 			int bitDepth = original.getBitDepth();
-			double maxValue = Math.pow(2, bitDepth) - 1, w = original.getWidth(), h = original
-					.getHeight();
+			double maxValue = Math.pow(2, bitDepth) - 1;
 			double preRes = (maxValue * maxValue * w * h) / sum;
 			double res = 10 * Math.log10(preRes);
 			return res;
