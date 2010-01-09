@@ -41,7 +41,7 @@ public class ExtractionAlgorithmC24Impl implements ExtractionAlgorithm {
 		int beta1 = delta * getBeta1(g, t, m, n);
 		int beta2 = delta * getBeta2(g,t,m,n);
 		ImageProcessor ip = new ColorProcessor(w, h);
-		ImagePlus recoveredImg = new ImagePlus("recovered-image",ip);
+		ImagePlus recoveredImg = new ImagePlus("recovered-"+stegoImg.getTitle(),ip);
 		recoveredImg.getProcessor().insert(stegoImg.getProcessor(), 0, 0);
 		int bitCount = 0;
 		
@@ -52,9 +52,9 @@ public class ExtractionAlgorithmC24Impl implements ExtractionAlgorithm {
 		//mientras queden bloques
 		for (int i = 0; i <= (h - m); i = i + m) {
 			for (int j = 0; j <= (w - n); j = j + n) {
-				int alpha = getAlpha(matrixM, stegoImg.getProcessor(), i, j, delta);
+				int alpha = getAlpha(matrixM, recoveredImg.getProcessor(), i, j, delta);
 				//Nota ¿es necesario reasignar?
-				recoveredImg = restoreGapBeta1(recoveredImg, stegoImg.getProcessor(), alpha, beta1, t, g, i, j, m, n);
+				recoveredImg = restoreGapBeta1(recoveredImg, recoveredImg.getProcessor(), alpha, beta1, t, g, i, j, m, n);
 
 				if (isInZeroZone(t, alpha) && (bitCount < dataSize)) {
 					bitCount++;
@@ -74,7 +74,7 @@ public class ExtractionAlgorithmC24Impl implements ExtractionAlgorithm {
 					}
 					//Nota: no sé si es necesaria esta parafernalia de recoveredImg = ... pasamos un objeto por referencia ¿no?
 					//no debería hacer falta asignarlo de nuevo
-					recoveredImg = restoreGapBeta2(recoveredImg, stegoImg.getProcessor(), alpha, beta2, t, g, i, j, m, n);
+					recoveredImg = restoreGapBeta2(recoveredImg, recoveredImg.getProcessor(), alpha, beta2, t, g, i, j, m, n);
 				}
 			}
 

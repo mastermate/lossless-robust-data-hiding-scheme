@@ -1,3 +1,4 @@
+package pid;
 
 import ij.IJ;
 import ij.ImagePlus;
@@ -21,9 +22,10 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class RobustHiding_PID implements PlugInFilter {
+public class Robust_Hiding implements PlugInFilter {
 
 	private ImagePlus imp;
+	private ImagePlus originalCopy;
 	private ImagePlus res_inyeccion;
 	private ImagePlus res_extraccion;
 	private double m=8, n=8;
@@ -33,6 +35,7 @@ public class RobustHiding_PID implements PlugInFilter {
 	private double delta=1;
 	private String choice;
 	private String imageChoice;
+	private String texto;
 	private boolean estadisticas;
 	private boolean extraccion;
 	public static final String INYECCION ="Inyección de datos";
@@ -47,14 +50,20 @@ public class RobustHiding_PID implements PlugInFilter {
 		
 	@Override
 	public void run(ImageProcessor ip) {
-		 // Muestro el panel para seleccionar el proceso a realizar
 		 
+		//copia inalterada de la imagen original
+		int w = imp.getWidth(), h = imp.getHeight();
+		ImageProcessor procAux = imp.getProcessor().createProcessor(w, h);
+		originalCopy = new ImagePlus("stego-image", procAux);
+		originalCopy.getProcessor().insert(imp.getProcessor(), 0, 0);
+		
+		// Muestro el panel para seleccionar el proceso a realizar
 		this.getInyExtPanel();
 		this.configurationPanel();
 		if(this.RGB == this.imageChoice){
 		 	this.seleccionCanal();
 		}
-		if( this.choice == RobustHiding_PID.INYECCION){
+		if( this.choice == Robust_Hiding.INYECCION){
 			this.res_inyeccion = this.inyeccion();
 			if(this.extraccion){
 				try {
@@ -62,9 +71,6 @@ public class RobustHiding_PID implements PlugInFilter {
 				} catch (IOException e) {
 					IJ.showMessage("No se ha podido guardar los datos extraídos.");
 				}
-			}
-			if(this.estadisticas){
-				this.showEstadisticas();
 			}
 		}else{	
 			try {
@@ -218,7 +224,7 @@ public class RobustHiding_PID implements PlugInFilter {
 		 }
 		 
 		// Panel para obtener los valores de m, n, g y t.
-		 String texto = new String(data);
+		texto = new String(data);
 		IJ.showMessage("La información que se va a inyectar es:\n "+ texto);
 		 
 		IJ.showMessage("Ya tenemos los datos que vamos a inyectar. Ahora se le pedirá que introduzca los valores \n" +
@@ -259,10 +265,13 @@ public class RobustHiding_PID implements PlugInFilter {
 	 */
 	public void extraccion() throws IOException{
 		ExtractionAlgorithm ext;
+		EmbeddedValidation val;
 		if(this.imageChoice == this.G8){
 			 ext = new ExtractionAlgorithmG8Impl();
+			 val = new EmbeddedValidationG8Impl();
 		}else{
 			 ext = new ExtractionAlgorithmC24Impl();
+			 val = new EmbeddedValidationC24Impl();
 		}
 		getVariablePanelExtraccion();
 		HidingResult hres = new HidingResult();
@@ -272,11 +281,26 @@ public class RobustHiding_PID implements PlugInFilter {
 			hres = ext.extractBits(this.imp, (int) m, (int) n, (int) t, (int) g, (int) delta, (int) n0, (int) n1);
 		}
 		
-		String texto = new String(hres.getData());
-		this.getPanelSalvarArchivo(texto);
+		byte [] text_data = hres.getData();
+		String texto = new String(text_data);
+		IJ.showMessage(texto);
+		getPanelSalvarArchivo(texto);
 		IJ.showMessage("El texto se ha obtenido correctamente y ha sido guardado.");
 		ImagePlus res = hres.getImg();
 		res.show();
+		
+		// Cálculo de valores estadísticos.
+		
+		if(this.extraccion){
+			double psnr1 = 0, psnr2 = 0;
+			psnr1 = val.getPSNR(originalCopy, res_inyeccion);
+			psnr2 = val.getPSNR(originalCopy, res);
+			double bitErrorRate = val.getBitErrorRate(this.texto.getBytes(), text_data, text_data.length);
+			if(this.estadisticas){
+				this.showEstadisticas(psnr1, psnr2, bitErrorRate);
+			}
+		}
+		
 		
 	}
 	
@@ -286,17 +310,17 @@ public class RobustHiding_PID implements PlugInFilter {
 	public void configurationPanel(){
 		
 		GenericDialog d = new GenericDialog("Configuración del proceso de inyección y extracción.", IJ.getInstance());
-		String [] labels = {RobustHiding_PID.G8, RobustHiding_PID.RGB};
+		String [] labels = {Robust_Hiding.G8, Robust_Hiding.RGB};
 		d.addChoice("Tipo de imagen", labels, labels[0]);
-		if(this.choice == RobustHiding_PID.INYECCION){
-			d.addCheckbox(RobustHiding_PID.INYECCIONYEXTRACCION, false);
-			d.addCheckbox(RobustHiding_PID.ESTADISTICAS, false);
+		if(this.choice == Robust_Hiding.INYECCION){
+			d.addCheckbox(Robust_Hiding.INYECCIONYEXTRACCION, false);
+			d.addCheckbox(Robust_Hiding.ESTADISTICAS, false);
 		}
 		d.showDialog();
 		if(d.wasCanceled()) 
 			this.imp.close();
 		this.imageChoice = d.getNextChoice();
-		if(this.choice == RobustHiding_PID.INYECCION){
+		if(this.choice == Robust_Hiding.INYECCION){
 			this.extraccion = d.getNextBoolean();
 			this.estadisticas = d.getNextBoolean();
 		}
@@ -307,16 +331,16 @@ public class RobustHiding_PID implements PlugInFilter {
 	 */
 	public void seleccionCanal(){
 		GenericDialog d = new GenericDialog("Selecciona un canal.", IJ.getInstance());
-		String [] labels = {RobustHiding_PID.C1,RobustHiding_PID.C2,RobustHiding_PID.C3};
+		String [] labels = {Robust_Hiding.C1,Robust_Hiding.C2,Robust_Hiding.C3};
 		String canal;
 		d.addChoice("Canal", labels, labels[1]);
 		d.showDialog();
 		if(d.wasCanceled()) 
 			this.imp.close();
 		canal = d.getNextString();
-		if(canal == RobustHiding_PID.C1) {
+		if(canal == Robust_Hiding.C1) {
 			this.selectedChanel = 0;
-		}else if(canal == RobustHiding_PID.C2){
+		}else if(canal == Robust_Hiding.C2){
 			this.selectedChanel = 1;
 		}else{
 			this.selectedChanel = 2;
@@ -338,10 +362,14 @@ public class RobustHiding_PID implements PlugInFilter {
 	}
 	
 	/**
-	 * Genera la documentación estadística a partir de la inyección y la extracción.
-	 */
-	public void showEstadisticas(){
-		IJ.write("Se muestran las estadísticas");
-	}
+     * Genera la documentación estadística a partir de la inyección y la extracción.
+     */
+    public void showEstadisticas(double psnr1, double psnr2, double bitErrorRate){
+            IJ.write("PSNR Original - Stego: " + psnr1);
+            IJ.write("PSNR Original - Recovered: " + psnr2);
+            IJ.write("Tase de error de bits: " + bitErrorRate);
+    }
+
+
 
 }

@@ -9,7 +9,7 @@ import es.us.pid.grupo14.EmbeddedValidation;
 import es.us.pid.grupo14.impl.EmbeddedValidationC24Impl;
 
 
-public class PSNR_RGB_Tests {
+public class PSNRRGBTests {
 
 	private EmbeddedValidation val;
 	

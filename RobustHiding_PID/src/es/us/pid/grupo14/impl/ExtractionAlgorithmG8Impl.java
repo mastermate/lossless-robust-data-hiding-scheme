@@ -36,7 +36,7 @@ public class ExtractionAlgorithmG8Impl implements ExtractionAlgorithm {
 		int beta1 = delta * getBeta1(g1,t1,m,n);
 		int beta2 = delta * getBeta2(g1,t1,m,n);
 		ImageProcessor ip = new ByteProcessor(w, h);
-		ImagePlus recoveredImg = new ImagePlus("recovered-image",ip);
+		ImagePlus recoveredImg = new ImagePlus("recovered-"+stegoImg.getTitle(),ip);
 		recoveredImg.getProcessor().insert(stegoImg.getProcessor(), 0, 0);
 		int bitCount = 0;
 		

@@ -51,8 +51,9 @@ public class EmbeddingAlgorithmC24Impl implements EmbeddingAlgorithm {
 		n0 = n1 = 0;
 		int w = img.getWidth(), h = img.getHeight();
 		ImageProcessor ip = new ColorProcessor(w, h);
-		ImagePlus res = new ImagePlus("stego-image", ip);
+		ImagePlus res = new ImagePlus("stego-"+img.getTitle(), ip);
 		res.getProcessor().insert(img.getProcessor(), 0, 0);
+		
 		int bitCount = 0;
 		int dataSize = bits.length * 8;
 		int[][] matrixM = RobustHidingUtils.getMatrixM(m, n);

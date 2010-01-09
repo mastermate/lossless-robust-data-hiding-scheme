@@ -40,14 +40,14 @@ public class EmbeddingAlgorithmG8Impl implements EmbeddingAlgorithm {
 		reset();
 		int w = img.getWidth(), h = img.getHeight();
 		ImageProcessor ip = new ByteProcessor(w, h);
-		ImagePlus res = new ImagePlus("stego-image", ip);
+		ImagePlus res = new ImagePlus("stego-"+img.getTitle(), ip);
 		res.getProcessor().insert(img.getProcessor(), 0, 0);
 		int bitCont = 0;
 		int dataSize = bits.length * 8;
 		int[][] matrixM = getMatrixM(m, n);
 		
 		
-		int[][] pixels = img.getProcessor().getIntArray();
+		int[][] pixels = res.getProcessor().getIntArray();
 
 
 		// mientras queden bloques
