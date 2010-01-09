@@ -2,6 +2,7 @@
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.GenericDialog;
+import ij.io.SaveDialog;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 import es.us.pid.grupo14.AlphasImage;
@@ -16,6 +17,8 @@ import es.us.pid.grupo14.impl.EmbeddedValidationC24Impl;
 import es.us.pid.grupo14.impl.EmbeddingAlgorithmC24Impl;
 import es.us.pid.grupo14.impl.ExtractionAlgorithmC24Impl;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class RobustHiding_PID implements PlugInFilter {
@@ -54,13 +57,21 @@ public class RobustHiding_PID implements PlugInFilter {
 		if( this.choice == RobustHiding_PID.INYECCION){
 			this.res_inyeccion = this.inyeccion();
 			if(this.extraccion){
-				this.extraccion();
+				try {
+					this.extraccion();
+				} catch (IOException e) {
+					IJ.showMessage("No se ha podido guardar los datos extraidos.");
+				}
 			}
 			if(this.estadisticas){
 				this.showEstadisticas();
 			}
 		}else{	
-			this.extraccion();
+			try {
+				this.extraccion();
+			} catch (IOException e) {
+				IJ.showMessage("No se ha podido guardar los datos extraidos.");
+			}
 		}
 		 
 	}
@@ -244,8 +255,9 @@ public class RobustHiding_PID implements PlugInFilter {
 	
 	/**
 	 * Realiza la inyecci—n de datos en una imagen.
+	 * @throws IOException 
 	 */
-	public void extraccion(){
+	public void extraccion() throws IOException{
 		ExtractionAlgorithm ext;
 		if(this.imageChoice == this.G8){
 			 ext = new ExtractionAlgorithmG8Impl();
@@ -261,7 +273,8 @@ public class RobustHiding_PID implements PlugInFilter {
 		}
 		
 		String texto = new String(hres.getData());
-		IJ.showMessage("El texto que se ha obtenido de la extracci—n es: \n" + texto);
+		this.getPanelSalvarArchivo(texto);
+		IJ.showMessage("El texto que se ha obtenido correctamente y ha sido guardado.");
 		ImagePlus res = hres.getImg();
 		res.show();
 		
@@ -307,10 +320,21 @@ public class RobustHiding_PID implements PlugInFilter {
 			this.selectedChanel = 1;
 		}else{
 			this.selectedChanel = 2;
+		}	
+	}
+	
+	public void getPanelSalvarArchivo(String texto) throws IOException{
+		SaveDialog sd = new SaveDialog("Seleccione donde guardar el texto extraido.", "texto extraido", ".txt");
+		String directory = sd.getDirectory();
+		String filename = sd.getFileName();
+		if(filename == null){return;}
+		try{
+			BufferedWriter bw = new BufferedWriter(new FileWriter(directory+filename));
+			bw.write(texto);
+			bw.close();
+		}catch (IOException e) {
+			IJ.showMessage("No se ha podido guardar los datos extraidos");
 		}
-		
-		  
-		
 	}
 	
 	/**
